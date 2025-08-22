@@ -1,13 +1,81 @@
+/* Container for featured + small cards */
+.forecast-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* --- BIG FEATURED CARD --- */
+.big-weather-card {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 20px;
+  width: 100%;
+}
+
+.big-weather-card .weather-card {
+  transform: none;
+  max-width: 500px;
+  width: 90%;               /* keep centered */
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.big-weather-card .weather-icon {
+  font-size: 9rem;          /* HUGE icon for big card */
+  width: 90%;
+  margin: 20px 0 25px;
+}
+
+.big-weather-card p {
+  font-size: 1.4rem;
+}
+
+/* --- HORIZONTAL SCROLL FOR SMALLER CARDS --- */
+.scroll-cards-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 10px 0;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.scroll-cards-container::-webkit-scrollbar {
+  display: none;
+}
+
+.small-weather-card {
+  flex: 0 0 220px;
+  cursor: pointer;
+}
+
+.small-weather-card .weather-card {
+  max-width: 220px;
+  padding: 15px;
+}
+
+.small-weather-card.active .weather-card {
+  border: 2px solid #0077b6;
+  box-shadow: 0 0 12px rgba(0, 119, 182, 0.3);
+}
+
+/* --- BASE CARD STYLING --- */
 .weather-card {
   flex: 1 1 250px;
-  max-width: 300px;
   margin: 10px;
-  padding: 16px;
+  padding: 20px;
   border-radius: 12px;
   background: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .weather-card:hover {
@@ -15,14 +83,44 @@
 }
 
 .weather-icon {
-  font-size: 3rem;
-  margin: 10px 0;
+  font-size: 5rem;
+  width: 80%;
+  margin: 10px 0 15px;
+  display: flex;
+  justify-content: center;
 }
 
-/* Responsive grid */
+.weather-card p {
+  font-size: 1.2rem;
+  margin: 6px 0;
+}
+
+/* --- RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
-  .weather-card {
-    flex: 1 1 100%;
+  .big-weather-card .weather-card {
     max-width: 100%;
+    width: 95%;
+    padding: 20px;
+  }
+
+  .big-weather-card .weather-icon {
+    font-size: 7rem;
+  }
+
+  .big-weather-card p {
+    font-size: 1.2rem;
+  }
+
+  .small-weather-card {
+    flex: 0 0 180px;
+  }
+
+  .small-weather-card .weather-card {
+    max-width: 180px;
+    padding: 12px;
+  }
+
+  .weather-icon {
+    font-size: 4rem;
   }
 }

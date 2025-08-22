@@ -1,4 +1,7 @@
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
+import "../components/WeatherCard.css";
 
 type ForecastDay = {
   date: string;
@@ -10,13 +13,54 @@ type ForecastDay = {
   status_experienced: string;
 };
 
-export default function DropzonePage({ name, forecast }: { name: string; forecast: ForecastDay[] }) {
+export default function DropzonePage() {
+  const { name } = useParams<{ name: string }>();
+  const [forecast, setForecast] = useState<ForecastDay[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
+
+  useEffect(() => {
+    fetch(
+      "https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/default/skydiving-forecast"
+    )
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch forecast");
+        return res.json();
+      })
+      .then((data) => {
+        const dzData = data[name || ""];
+        if (dzData) {
+          setForecast(dzData);
+          setSelectedDay(dzData[0]); // default: today
+        }
+      })
+      .catch((err) => setError(err.message));
+  }, [name]);
+
+  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
+  if (!forecast.length) return <p>Loading forecast...</p>;
+
   return (
-    <div>
-      <h2>{name} Forecast</h2>
-      <div className="cards-grid">
+    <div className="forecast-wrapper">
+      {/* Big selected card */}
+      {selectedDay && (
+        <div className="big-weather-card">
+          <WeatherCard day={selectedDay} isBig />
+        </div>
+      )}
+
+      {/* Scrollable smaller cards */}
+      <div className="scroll-cards-container">
         {forecast.map((day) => (
-          <WeatherCard key={day.date} day={day} />
+          <div
+            key={day.date}
+            className={`small-weather-card ${
+              selectedDay?.date === day.date ? "active" : ""
+            }`}
+            onClick={() => setSelectedDay(day)}
+          >
+            <WeatherCard day={day} isBig={false} />
+          </div>
         ))}
       </div>
     </div>
