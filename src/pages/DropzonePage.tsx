@@ -1,3 +1,4 @@
+// src/pages/DropzonePage.tsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
@@ -31,7 +32,7 @@ export default function DropzonePage() {
         const dzData = data[name || ""];
         if (dzData) {
           setForecast(dzData);
-          setSelectedDay(dzData[0]); // default: today
+          setSelectedDay(dzData[0]); // show today’s forecast by default
         }
       })
       .catch((err) => setError(err.message));
@@ -41,24 +42,32 @@ export default function DropzonePage() {
   if (!forecast.length) return <p>Loading forecast...</p>;
 
   return (
-    <div className="forecast-wrapper">
+    <div className="dropzone-page forecast-wrapper">
+      {/* Dropzone Name */}
+      {name && (
+        <h2 className="dropzone-title">
+          {decodeURIComponent(name).replace(/-/g, " ")}
+        </h2>
+      )}
+
       {/* Big selected card */}
       {selectedDay && (
         <div className="big-weather-card">
-          <WeatherCard day={selectedDay} isBig />
+          <WeatherCard day={selectedDay} isBig={true} />
         </div>
       )}
 
-      {/* Scrollable smaller cards */}
-      <div className="scroll-cards-container">
+      {/* Smaller cards row */}
+      <div className="small-cards-row">
         {forecast.map((day) => (
           <div
             key={day.date}
-            className={`small-weather-card ${
+            className={`mini-weather-card ${
               selectedDay?.date === day.date ? "active" : ""
             }`}
             onClick={() => setSelectedDay(day)}
           >
+            {/* Simplified WeatherCard for mini cards */}
             <WeatherCard day={day} isBig={false} />
           </div>
         ))}

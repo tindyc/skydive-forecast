@@ -29,20 +29,25 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
   return (
     <div className={`weather-card ${isBig ? "big" : "small"}`}>
       <h3>{day.date}</h3>
-      <div className="weather-icon">{getWeatherIcon()}</div>
+      <div className={isBig ? "weather-icon" : "mini-weather-icon"}>
+        {getWeatherIcon()}
+      </div>
 
-      {/* Shared fields */}
-      <p>🌡 {day.temperature_2m_max}°C</p>
-      <p>💨 {day.windspeed_10m_max} km/h</p>
-
-      {/* Big card shows more details */}
-      {isBig && (
+      {isBig ? (
         <>
+          <p>🌡 {day.temperature_2m_max}°C</p>
+          <p>💨 {day.windspeed_10m_max} km/h</p>
           <p>☁️ {day.cloudcover_mean}%</p>
-          <p>Beginner: {day.status_beginner}</p>
-          <p>Experienced: {day.status_experienced}</p>
+          <p>
+            Beginner: {day.status_beginner}{" "}
+            {day.status_beginner.toLowerCase().includes("no") ? "❌" : "✅"}
+          </p>
+          <p>
+            Experienced: {day.status_experienced}{" "}
+            {day.status_experienced.toLowerCase().includes("no") ? "❌" : "✅"}
+          </p>
         </>
-      )}
+      ) : null}
     </div>
   );
 };

@@ -7,7 +7,7 @@ function Navbar() {
 
   return (
     <div className="navbar">
-      <Link to="/" className="nav-logo">🪂 Skydiving Forecast</Link>
+      <Link to="/" className="nav-logo">🪂 Skydive Forecast</Link>
       <button className="home-button" onClick={() => navigate("/")}>
         🏠
       </button>
