@@ -43,7 +43,7 @@ function App() {
         </Routes>
 
         <footer>
-          <p>Designed & built by <strong>TindyC</strong> ✨</p>
+          <p> © <strong>TindyC</strong> ☁︎</p>
         </footer>
       </div>
     </Router>
