@@ -12,6 +12,7 @@ type ForecastDay = {
   cloudcover_mean: number;
   status_beginner: string;
   status_experienced: string;
+  description: string;   // 👈 add here
 };
 
 export default function DropzonePage() {

@@ -10,6 +10,7 @@ type ForecastDay = {
   cloudcover_mean: number;
   status_beginner: string;
   status_experienced: string;
+  description: string; // 👈 ensure backend sends this
 };
 
 interface Props {
@@ -26,15 +27,14 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
     return "☀️";
   };
 
-  return (
-    <div className={`weather-card ${isBig ? "big" : "small"}`}>
-      <h3>{day.date}</h3>
-      <div className={isBig ? "weather-icon" : "mini-weather-icon"}>
-        {getWeatherIcon()}
-      </div>
-
-      {isBig ? (
-        <>
+  // ✅ Big Card layout: icon left, info right
+  if (isBig) {
+    return (
+      <div className="weather-card big">
+        <div className="weather-icon">{getWeatherIcon()}</div>
+        <div className="weather-info">
+          <h3>{day.date}</h3>
+          <p className="weather-description">{day.description}</p>
           <p>🌡 {day.temperature_2m_max}°C</p>
           <p>💨 {day.windspeed_10m_max} km/h</p>
           <p>☁️ {day.cloudcover_mean}%</p>
@@ -46,8 +46,17 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
             Experienced: {day.status_experienced}{" "}
             {day.status_experienced.toLowerCase().includes("no") ? "❌" : "✅"}
           </p>
-        </>
-      ) : null}
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Small Card layout (default)
+  return (
+    <div className="weather-card small">
+      <h4>{day.date}</h4>
+      <div className="mini-weather-icon">{getWeatherIcon()}</div>
+      <p className="weather-description">{day.description}</p>
     </div>
   );
 };
