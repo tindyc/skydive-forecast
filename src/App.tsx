@@ -19,7 +19,7 @@ function App() {
   const dropzones = ["Hibaldstow", "Langar", "Dunkeswell"];
 
   return (
-    <Router basename={import.meta.env.DEV ? "/" : "/skydiving-forecast"}>
+    <Router basename={import.meta.env.BASE_URL}>
       <div className="app">
         <Navbar />
 
