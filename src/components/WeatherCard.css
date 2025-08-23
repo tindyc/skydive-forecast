@@ -119,6 +119,47 @@
   margin: 0 0 4px;
 }
 
+/* Big card left section */
+.weather-card.big {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+}
+
+.weather-card.big .weather-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.weather-card.big .weather-icon {
+  font-size: 9rem;
+  margin-bottom: 0.5rem;
+}
+
+.weather-card.big .weekday {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #58a6ff;
+  margin: 0;
+}
+
+.weather-card.big .date {
+  font-size: 1rem;
+  color: #c9d1d9;
+  margin: 2px 0 0;
+}
+
+/* Weekday label in mini cards */
+.weather-card.small .weekday-mini {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #58a6ff;
+  margin: 2px 0 6px;
+}
+
 /* --- RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
   .forecast-wrapper {

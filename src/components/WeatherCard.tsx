@@ -10,7 +10,7 @@ type ForecastDay = {
   cloudcover_mean: number;
   status_beginner: string;
   status_experienced: string;
-  description: string; // 👈 ensure backend sends this
+  description: string;
 };
 
 interface Props {
@@ -27,13 +27,23 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
     return "☀️";
   };
 
-  // ✅ Big Card layout: icon left, info right
+  const getDayOfWeek = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-GB", { weekday: "long" });
+  };
+
   if (isBig) {
     return (
       <div className="weather-card big">
-        <div className="weather-icon">{getWeatherIcon()}</div>
+        {/* Left side: Icon + Date + Weekday */}
+        <div className="weather-left">
+          <div className="weather-icon">{getWeatherIcon()}</div>
+          <p className="weekday">{getDayOfWeek(day.date)}</p>
+          <p className="date">{day.date}</p>
+        </div>
+
+        {/* Right side: Weather Info */}
         <div className="weather-info">
-          <h3>{day.date}</h3>
           <p className="weather-description">{day.description}</p>
           <p>🌡 {day.temperature_2m_max}°C</p>
           <p>💨 {day.windspeed_10m_max} km/h</p>
@@ -51,14 +61,17 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
     );
   }
 
-  // ✅ Small Card layout (default)
+// ✅ inside WeatherCard.tsx, modify the small card section
+
   return (
     <div className="weather-card small">
       <h4>{day.date}</h4>
+      <p className="weekday-mini">{getDayOfWeek(day.date)}</p>
       <div className="mini-weather-icon">{getWeatherIcon()}</div>
       <p className="weather-description">{day.description}</p>
     </div>
   );
+
 };
 
 export default WeatherCard;
