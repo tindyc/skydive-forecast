@@ -6,7 +6,7 @@ type ForecastDay = {
   date: string;
   temperature_2m_max: number;
   precipitation_sum: number;
-  windspeed_10m_max: number; // now already in mph from Lambda
+  windspeed_10m_max: number; // in mph (converted in lambda)
   cloudcover_mean: number;
   status_beginner: string;
   status_experienced: string;
