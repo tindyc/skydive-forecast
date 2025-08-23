@@ -10,81 +10,61 @@ Because sometimes the biggest leap isn’t out of the plane—it’s trusting th
 
 ## ✨ Features  
 
-- **UK Dropzones** – currently includes Hibaldstow, Langar, and Dunkeswell (with room to grow).  
+- **UK Dropzones** – now includes *all official British Skydiving dropzones* (scraped automatically).  
 - **Beginner vs Experienced** – conditions are assessed differently depending on skill level.  
-- **Weather Insights** – clear daily forecasts: temperature, rain, wind (in mph), cloud cover, and a simple description.  
+- **Weather Insights** – daily forecasts: temperature, rain, wind (in mph), cloud cover, and a simple description.  
 - **Safe/No Jump Indicators** – “GOOD ✅” or “NO Jumping ❌” guidance for each day.  
-- **Mobile-friendly UI** – scrollable forecast cards and responsive design for checking on the go.  
-- **Educational Tooltips** – explanations of safe jumping conditions, sourced from British Skydiving.  
+- **Mobile-friendly UI** – scrollable forecast cards and responsive design.  
+- **Educational Tooltips** – explain safe conditions, sourced from British Skydiving.  
 
 ---
 ## 🛠 Tech Stack  
 
-I’ve kept things lightweight but practical:  
+- **React + TypeScript** – component-based frontend.  
+- **React Router** – slug-based navigation (e.g. `/dropzone/skydive-langar`).  
+- **AWS Lambda + API Gateway** – serverless backend that fetches and processes forecasts.  
+- **Python Scraper** – scrapes dropzones from British Skydiving and geocodes them with Google Maps API.  
+- **GitHub Actions Workflow** – automates scraper → commit → Lambda deploy → frontend build & deploy.  
+- **Open-Meteo API** – free forecast data provider.  
+---
+## 🚀 Phase 2 — Upgrades & Optimizations  
 
-- **React + TypeScript** – a solid foundation for a clean, component-based UI.  
-  - Example: `WeatherCard.tsx` renders forecast cards with icons, conditions, and safety checks.  
+This project has evolved significantly from **Phase 1** to **Phase 2**:
 
-- **React Router** – enables dropzone pages and navigation (`App.tsx` has a simple navbar and routes).  
-  - Configured with `basename="/skydive-forecast"` so it works when deployed on **GitHub Pages**, where apps are served from a subpath instead of the domain root.  
+### 🔹 Automated Dropzones  
+- Added a **Python scraper (`tools/scraper.py`)** that fetches every dropzone name from [British Skydiving](https://britishskydiving.org/find-drop-zone/).  
+- Uses **Google Geocoding API** to attach lat/lon coordinates.  
+- Updates `public/dropzones.json`.
 
-- **CSS** – customised styles in `App.css` and `WeatherCard.css` for a modern, dark, skydiving-friendly look.  
+### 🔹 CI/CD with GitHub Actions  
+- New workflow (`.github/workflows/update-dropzones.yml`) automates:  
+  - Running the scraper.  
+  - Committing updated `dropzones.json`.  
+  - Deploying updated Lambda code.  
+  - Building & publishing the frontend to GitHub Pages.  
+- Run manually (`workflow_dispatch`) → keeps costs free-tier friendly.  
 
-- **AWS Lambda + API Gateway (Serverless Backend)** – the core of the app.  
-  - The Lambda function fetches **10 days of forecast data** from [Open-Meteo](https://open-meteo.com/) for each dropzone.  
-  - Converts **wind speed** from km/h → mph so it makes sense to UK jumpers.  
-  - Applies **skydiving-specific safety rules** to decide if each day is a “GOOD ✅” or “NO Jumping ❌” day for **beginners vs experienced** skydivers.  
-  - Returns the processed forecast via a simple JSON API, which the React frontend consumes.  
-  - **Why Lambda instead of EC2?**  
-    - EC2 = you rent a server that runs 24/7, even if no one is using it. You pay monthly, whether idle or busy.  
-    - Lambda = code runs **on demand** only when a request comes in. If no one uses the app today, it costs **nothing**.  
-    - For a project like this (sporadic traffic, lightweight workloads), Lambda is dramatically cheaper and easier — and almost always stays within AWS’s free tier.  
-
-- **Open-Meteo API** – Free and reliable weather data provider. 
+### 🔹 Optimized Lambda  
+- **Phase 1**: Lambda fetched forecasts for *all dropzones at once* → very slow.  
+- **Phase 2**: Lambda now fetches **only the requested dropzone’s forecast** via `?dz=DropzoneName`.  
+- Smaller payloads, much faster responses.    
 
 ---
-
-## 🤔 Why These Choices?  
-
-- **React + TypeScript**: I wanted strong typing (to avoid silly bugs) and reusable components. It also makes the UI easier to maintain and extend.  
-- **React Router**: Makes the app feel like a proper multi-page site without leaving the browser. Using `basename` was essential for GitHub Pages deployment (otherwise routing would break on refresh).  
-- **Lambda**: I’m not running a full backend, just need to fetch and filter weather. Serverless is simple, and scales without me worrying.  
-- **Custom CSS**: Could’ve used a UI library, but I wanted full control to refresh my CSS skills. The design is minimal, following a less is more style.  
-
----
-## 🏗️ Architecture 🌐 API Gateway Setup  
-
-The project runs as a lightweight serverless full-stack app:
+## 🏗️ Architecture  
 
 ![Architecture Diagram](src/assets/img/architecture.png)
 
-### How It Works:
-
-#### React Frontend (GitHub Pages)
-
-Users select a dropzone → app makes a fetch request.
-
-#### API Gateway (HTTP API)
-
-Stage: $default → API is reachable at:
-```
-https://<api-id>.execute-api.<region>.amazonaws.com/
-```
-(no /default path required).
-
-Route: ANY / → all requests at / are sent to Lambda.
-
-### AWS Lambda (Python)
-
-Fetches Open-Meteo API for each dropzone.
-
-Converts wind speeds (km/h → mph).
-
-Applies beginner vs experienced jump rules.
-
-Returns a structured JSON response.
-
-#### Frontend consumes JSON → Displays forecasts + “GOOD ✅ / NO ❌” jump indicators.
+### Flow
+1. **Scraper (Python + Playwright + Google API)**  
+   - Scrapes dropzones → geocodes → saves to `public/dropzones.json`.  
+2. **Frontend (React, GitHub Pages)**  
+   - Loads dropzones from JSON → renders slugs (`/dropzone/skydive-langar`).  
+3. **API Gateway + Lambda (Python)**  
+   - Fetches forecast for only the selected DZ.  
+   - Converts wind to mph, applies jump safety rules.  
+   - Returns structured JSON.  
+4. **Frontend**  
+   - Displays forecasts in interactive `WeatherCard`s with safety indicators.  
 ---
 
 ## 🚀 Getting Started  
@@ -116,7 +96,8 @@ npm run deploy
 ```
 
 ## Future Ideas
-1. Add more dropzones (UK & worldwide 🌍).
+1. Add more dropzones (UK & worldwide 🌍). 
+* All of England's dropzones now added by scraping from British Skydiving in Phrase2.
 
 2. Notifications/alerts when a “GOOD ✅” day is coming up.
 
