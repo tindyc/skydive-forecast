@@ -18,7 +18,6 @@ Because sometimes the biggest leap isn’t out of the plane—it’s trusting th
 - **Educational Tooltips** – explanations of safe jumping conditions, sourced from British Skydiving.  
 
 ---
-
 ## 🛠 Tech Stack  
 
 I’ve kept things lightweight but practical:  
@@ -36,10 +35,10 @@ I’ve kept things lightweight but practical:
   - Converts **wind speed** from km/h → mph so it makes sense to UK jumpers.  
   - Applies **skydiving-specific safety rules** to decide if each day is a “GOOD ✅” or “NO Jumping ❌” day for **beginners vs experienced** skydivers.  
   - Returns the processed forecast via a simple JSON API, which the React frontend consumes.  
-  - By using Lambda + API Gateway, the backend is:  
-    - **Scalable** – only runs when needed.  
-    - **Low-maintenance** – no servers to babysit.  
-    - **Cheap** !!
+  - **Why Lambda instead of EC2?**  
+    - EC2 = you rent a server that runs 24/7, even if no one is using it. You pay monthly, whether idle or busy.  
+    - Lambda = code runs **on demand** only when a request comes in. If no one uses the app today, it costs **nothing**.  
+    - For a project like this (sporadic traffic, lightweight workloads), Lambda is dramatically cheaper and easier — and almost always stays within AWS’s free tier.  
 
 - **Open-Meteo API** – Free and reliable weather data provider. 
 
