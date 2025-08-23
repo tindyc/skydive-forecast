@@ -27,15 +27,19 @@ I’ve kept things lightweight but practical:
 - **React Router** – enables dropzone pages and navigation (`App.tsx` has a simple navbar and routes).  
   - Configured with `basename="/skydive-forecast"` so it works when deployed on **GitHub Pages**, where apps are served from a subpath instead of the domain root.  
 
-- **Custom CSS (Dark Theme)** – customised styles in `App.css` and `WeatherCard.css` for a simply looking, dark themed look.  
+- **Custom CSS (Dark Theme)** – hand-crafted styles in `App.css` and `WeatherCard.css` for a modern, dark, skydiving-friendly look.  
 
-- **AWS Lambda (Serverless)** – backend logic runs as a lightweight function.  
-  - Fetches forecasts from [Open-Meteo](https://open-meteo.com/).  
-  - Converts wind speeds from km/h → mph.  
-  - Applies skydiving-specific rules to mark days as safe or unsafe.  
-  - Serverless means I don’t manage servers—just code that runs when needed.  
+- **AWS Lambda + API Gateway (Serverless Backend)** – the real workhorse of the app.  
+  - The Lambda function fetches **10 days of forecast data** from [Open-Meteo](https://open-meteo.com/) for each dropzone.  
+  - Converts **wind speed** from km/h → mph so it makes sense to UK jumpers.  
+  - Applies **skydiving-specific safety rules** to decide if each day is a “GOOD ✅” or “NO Jumping ❌” day for **beginners vs experienced** skydivers.  
+  - Returns the processed forecast via a simple JSON API, which the React frontend consumes.  
+  - By using Lambda + API Gateway, the backend is:  
+    - **Scalable** – only runs when needed.  
+    - **Low-maintenance** – no servers to babysit.  
+    - **Cheap** !!
 
-- **Open-Meteo API** – free, reliable weather data source.
+- **Open-Meteo API** – Free and reliable weather data provider. 
 
 ---
 
