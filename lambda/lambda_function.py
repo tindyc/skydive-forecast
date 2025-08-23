@@ -1,16 +1,19 @@
 import json
 import urllib.request
 
-# Raw GitHub URL for dropzones.json (kept in your repo)
+# ✅ Updated: fetch from public/dropzones.json (single source of truth)
 DZ_URL = "https://raw.githubusercontent.com/tindyc/skydive-forecast/main/public/dropzones.json"
+
 
 def get_dropzones():
     """Fetch the latest dropzones.json from GitHub safely."""
     try:
         with urllib.request.urlopen(DZ_URL) as response:
             text = response.read().decode("utf-8")
-            print(f"✅ dropzones.json fetched successfully, {len(text)} bytes")
-            return json.loads(text)
+            dropzones = json.loads(text)
+            print(f"✅ dropzones.json fetched: {len(dropzones)} entries")
+            print("Available dropzones:", [dz["name"] for dz in dropzones])
+            return dropzones
     except Exception as e:
         print("❌ Failed to fetch dropzones.json:", e)
         return []
@@ -68,9 +71,15 @@ def lambda_handler(event, context):
             "body": json.dumps({"error": "Missing ?dz=DropzoneName parameter"}),
         }
 
-    # ✅ Load dropzones and find the requested one
+    # ✅ Normalize user input
+    dz_name_normalized = dz_name.strip().lower()
+
+    # ✅ Load dropzones
     dropzones = get_dropzones()
-    dz = next((d for d in dropzones if d["name"].lower() == dz_name.lower()), None)
+    dz = next(
+        (d for d in dropzones if d.get("name", "").strip().lower() == dz_name_normalized),
+        None,
+    )
 
     if not dz or not dz.get("lat") or not dz.get("lon"):
         return {
@@ -130,7 +139,7 @@ def lambda_handler(event, context):
                 "Access-Control-Allow-Headers": "Content-Type",
             },
             "body": json.dumps({
-                "dropzone": dz_name,
+                "dropzone": dz["name"],
                 "forecast": dz_report
             }),
         }
