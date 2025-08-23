@@ -16,12 +16,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # ----------------------------
+      #  Scraper (Python)
+      # ----------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install playwright requests python-dotenv
@@ -32,7 +35,7 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: python tools/scraper.py
 
-      - name: Commit changes
+      - name: Commit updated dropzones.json
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
@@ -51,8 +54,7 @@ jobs:
           aws-region: us-east-1  
 
       - name: Package Lambda
-        run: |
-          zip -j lambda.zip lambda/lambda_function.py
+        run: zip -j lambda.zip lambda/lambda_function.py
 
       - name: Deploy to Lambda
         run: |
@@ -69,12 +71,33 @@ jobs:
             --function-name skydiving-forecast \
             --timeout 30
 
-      # ----------------------------
-      # Print Lambda configuration
-      # ----------------------------
       - name: Show Lambda details
         run: |
           aws lambda get-function-configuration \
             --function-name skydiving-forecast \
             --query "{FunctionName:FunctionName, Timeout:Timeout, MemorySize:MemorySize, LastModified:LastModified, Version:Version}" \
             --output table
+
+      # ----------------------------
+      #  Build + Deploy Frontend
+      # ----------------------------
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Add 404.html for GitHub Pages
+        run: cp dist/index.html dist/404.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages   
