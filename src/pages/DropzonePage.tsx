@@ -32,7 +32,7 @@ export default function DropzonePage() {
   const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
   const [bestDay, setBestDay] = useState<ForecastDay | null>(null);
 
-  // ✅ Format date as DD-MM-YYYY
+  // ✅ Format date as DD-MM-YYYY (for banner only)
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date
@@ -41,7 +41,7 @@ export default function DropzonePage() {
         month: "2-digit",
         year: "numeric",
       })
-      .replace(/\//g, "-"); // Ensure dash format
+      .replace(/\//g, "-");
   };
 
   // ✅ Fetch dropzones.json from /public
@@ -129,7 +129,7 @@ export default function DropzonePage() {
       {/* Big selected card */}
       {selectedDay && (
         <div className="big-weather-card">
-          <WeatherCard day={{ ...selectedDay, date: formatDate(selectedDay.date) }} isBig={true} />
+          <WeatherCard day={selectedDay} isBig={true} />
         </div>
       )}
 
@@ -143,7 +143,7 @@ export default function DropzonePage() {
             }`}
             onClick={() => setSelectedDay(day)}
           >
-            <WeatherCard day={{ ...day, date: formatDate(day.date) }} isBig={false} />
+            <WeatherCard day={day} isBig={false} />
           </div>
         ))}
       </div>

@@ -5,6 +5,7 @@ import DropzonePage from "./pages/DropzonePage";
 import "./App.css";
 import { slugify } from "./utils/slug";
 import Preloader from "./components/Preloader";
+import ScrollToTop from "./components/ScrollToTop"; // ✅ external component
 
 // Restore GitHub Pages redirect if present
 const redirect = sessionStorage.redirect;
@@ -81,7 +82,7 @@ function HomePage() {
     }
   };
 
-    // Show Preloader while dropzones.json is loading
+  // Show Preloader while dropzones.json is loading
   if (loading) return <Preloader />;
 
   return (
@@ -167,6 +168,7 @@ function HomePage() {
 function App() {
   return (
     <Router basename="/skydive-forecast">
+      <ScrollToTop /> {/* ✅ ensures scroll reset on route change */}
       <div className="app">
         <Navbar />
         <Routes>

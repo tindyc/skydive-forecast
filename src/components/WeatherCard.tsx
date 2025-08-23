@@ -32,6 +32,17 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
     return date.toLocaleDateString("en-GB", { weekday: "long" });
   };
 
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+      .replace(/\//g, "-"); // DD-MM-YYYY
+  };
+
   if (isBig) {
     return (
       <div className="weather-card big">
@@ -39,14 +50,13 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
         <div className="weather-left">
           <div className="weather-icon">{getWeatherIcon()}</div>
           <p className="weekday">{getDayOfWeek(day.date)}</p>
-          <p className="date">{day.date}</p>
+          <p className="date">{formatDate(day.date)}</p>
         </div>
 
         {/* Right side: Weather Info */}
         <div className="weather-info">
           <p className="weather-description">{day.description}</p>
           <p>🌡 {day.temperature_2m_max}°C</p>
-          {/* ✅ changed km/h → mph */}
           <p>💨 {day.windspeed_10m_max} mph</p>
           <p>☁️ {day.cloudcover_mean}%</p>
           <p>
@@ -65,7 +75,7 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
   // ✅ Small card layout
   return (
     <div className="weather-card small">
-      <h4>{day.date}</h4>
+      <h4>{formatDate(day.date)}</h4>
       <p className="weekday-mini">{getDayOfWeek(day.date)}</p>
       <div className="mini-weather-icon">{getWeatherIcon()}</div>
       <p className="weather-description">{day.description}</p>

@@ -15,8 +15,8 @@ html, body {
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   background: #0d1117; 
+  min-height: auto;   /* ✅ allow body to control vertical scroll */
 }
 
 /* Navbar */
@@ -37,7 +37,6 @@ html, body {
   color: #e6edf3;          
   cursor: pointer;        
 }
-
 
 .home-button {
   background: none;
@@ -115,9 +114,9 @@ footer {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  flex: 1;
   padding: 1rem;
   box-sizing: border-box;
+  flex: unset;   /* ✅ don’t force full viewport height */
 }
 
 /* --- BIG FEATURED CARD --- */
@@ -159,7 +158,7 @@ footer {
   flex-wrap: nowrap;
   width: 100%;
   max-width: 1200px;
-  overflow-x: auto;
+  overflow-x: auto;   /* ✅ horizontal scroll only */
   padding: 10px 0 20px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -272,6 +271,7 @@ footer {
     font-size: 3.8rem;
   }
 }
+
 /* === Tooltip === */
 .title-with-info {
   display: flex;
@@ -305,7 +305,7 @@ footer {
   border-radius: 8px;
   position: absolute;
   z-index: 10;
-  bottom: 125%; /* 👆 show above icon */
+  bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
@@ -330,7 +330,7 @@ footer {
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  text-align: left;   /* 👈 keep natural inline flow */
+  text-align: left;
 }
 
 .jump-conditions h3 {
@@ -349,9 +349,9 @@ footer {
 .jump-conditions li {
   margin-bottom: 1rem;
   font-size: 1rem;
-  line-height: 1.5;   /* 👈 fix spacing */
-  display: block;     /* 👈 prevent column-like layout */
-  white-space: normal;/* 👈 wrap normally */
+  line-height: 1.5;
+  display: block;
+  white-space: normal;
 }
 
 .jump-conditions strong {
@@ -400,12 +400,11 @@ footer {
 /* Search bar container */
 .search-container {
   position: relative;
-  margin: 1rem auto 2rem auto; /* auto centers */
-  width: 90%; /* take up 90% of screen */
-  max-width: 420px; /* but never bigger than 420px */
+  margin: 1rem auto 2rem auto;
+  width: 90%;
+  max-width: 420px;
 }
 
-/* Input styling */
 .search-bar {
   width: 100%;
   padding: 0.7rem 1rem;
@@ -413,7 +412,7 @@ footer {
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  box-sizing: border-box; /* prevent overflow */
+  box-sizing: border-box;
 }
 
 .search-bar:focus {
