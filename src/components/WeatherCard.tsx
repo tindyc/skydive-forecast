@@ -6,7 +6,7 @@ type ForecastDay = {
   date: string;
   temperature_2m_max: number;
   precipitation_sum: number;
-  windspeed_10m_max: number;
+  windspeed_10m_max: number; // now already in mph from Lambda
   cloudcover_mean: number;
   status_beginner: string;
   status_experienced: string;
@@ -46,7 +46,8 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
         <div className="weather-info">
           <p className="weather-description">{day.description}</p>
           <p>🌡 {day.temperature_2m_max}°C</p>
-          <p>💨 {day.windspeed_10m_max} km/h</p>
+          {/* ✅ changed km/h → mph */}
+          <p>💨 {day.windspeed_10m_max} mph</p>
           <p>☁️ {day.cloudcover_mean}%</p>
           <p>
             Beginner: {day.status_beginner}{" "}
@@ -61,8 +62,7 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
     );
   }
 
-// ✅ inside WeatherCard.tsx, modify the small card section
-
+  // ✅ Small card layout
   return (
     <div className="weather-card small">
       <h4>{day.date}</h4>
@@ -71,7 +71,6 @@ const WeatherCard: React.FC<Props> = ({ day, isBig = false }) => {
       <p className="weather-description">{day.description}</p>
     </div>
   );
-
 };
 
 export default WeatherCard;
