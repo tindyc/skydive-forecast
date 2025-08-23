@@ -3,7 +3,10 @@ import json
 import os
 
 URL = "https://britishskydiving.org/find-drop-zone/"
-DZ_JSON = "dropzones.json"
+
+# Path to data/dropzones.json (relative to repo root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DZ_JSON = os.path.join(BASE_DIR, "data", "dropzones.json")
 
 def scrape_dropzones():
     """Scrape DZ names from British Skydiving using Playwright."""
@@ -34,9 +37,11 @@ def load_known_dropzones():
     return []
 
 def save_dropzones(dropzones):
-    """Save updated dropzones to JSON file."""
+    """Save updated dropzones to JSON file in /data."""
+    os.makedirs(os.path.dirname(DZ_JSON), exist_ok=True)  # ✅ ensure folder exists
     with open(DZ_JSON, "w") as f:
         json.dump(dropzones, f, indent=2)
+    print(f"💾 Updated {DZ_JSON} with {len(dropzones)} dropzones")
 
 def main():
     scraped_names = scrape_dropzones()
@@ -55,7 +60,7 @@ def main():
             new_dzs.append(new_dz)
 
     if new_dzs:
-        print("\n🚨 New dropzones added to dropzones.json (lat/lon = null):")
+        print("\n🚨 New dropzones added:")
         for dz in new_dzs:
             print(f" - {dz['name']}")
         save_dropzones(known_dzs)
