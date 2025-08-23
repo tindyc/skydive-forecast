@@ -293,3 +293,29 @@
     margin: 0.8rem 0;
   }
 }
+
+.best-day-banner {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-radius: 10px;
+  color: #c4d7f4;
+}
+
+.best-day-banner.no-good-day {
+  color: #a8071a;
+}
+
+.best-day-banner.clickable {
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.best-day-banner.clickable:hover {
+  background: #bae7ff;
+  color: black;
+  transform: scale(1.02);
+}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
 import "../components/WeatherCard.css";
-import { deslugify } from "../utils/slug"; // 
+import { deslugify } from "../utils/slug"; 
 import Preloader from "../components/Preloader";
 
 type ForecastDay = {
@@ -30,6 +30,19 @@ export default function DropzonePage() {
   const [forecast, setForecast] = useState<ForecastDay[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
+  const [bestDay, setBestDay] = useState<ForecastDay | null>(null);
+
+  // ✅ Format date as DD-MM-YYYY
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+      .replace(/\//g, "-"); // Ensure dash format
+  };
 
   // ✅ Fetch dropzones.json from /public
   useEffect(() => {
@@ -75,18 +88,48 @@ export default function DropzonePage() {
       .catch((err) => setError(err.message));
   }, [dropzoneName]);
 
+  // ✅ Find next best day for experienced jumpers
+  useEffect(() => {
+    if (!forecast.length) return;
+
+    const nextGoodDay = forecast.find((day) => {
+      const safeForExperienced =
+        day.windspeed_10m_max <= 30 &&
+        day.precipitation_sum === 0 &&
+        day.cloudcover_mean < 80 &&
+        day.temperature_2m_max > 0;
+      return safeForExperienced;
+    }) || null;
+
+    setBestDay(nextGoodDay);
+  }, [forecast]);
+
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
   if (!forecast.length) return <Preloader />; 
 
   return (
     <div className="dropzone-page forecast-wrapper">
+      {/* 🎉 Next Best Jump Day Notification */}
+      {bestDay ? (
+        <div 
+          className="best-day-banner clickable" 
+          onClick={() => setSelectedDay(bestDay)}
+        >
+          🎉 Next good jump day: <strong>{formatDate(bestDay.date)}</strong> ({bestDay.description})
+        </div>
+      ) : (
+        <div className="best-day-banner no-good-day">
+          ⚠️ No good jump days in the next 10 days.
+        </div>
+      )}
+
       {/* Dropzone Name */}
       {dropzoneName && <h2 className="dropzone-title">{dropzoneName}</h2>}
 
       {/* Big selected card */}
       {selectedDay && (
         <div className="big-weather-card">
-          <WeatherCard day={selectedDay} isBig={true} />
+          <WeatherCard day={{ ...selectedDay, date: formatDate(selectedDay.date) }} isBig={true} />
         </div>
       )}
 
@@ -100,7 +143,7 @@ export default function DropzonePage() {
             }`}
             onClick={() => setSelectedDay(day)}
           >
-            <WeatherCard day={day} isBig={false} />
+            <WeatherCard day={{ ...day, date: formatDate(day.date) }} isBig={false} />
           </div>
         ))}
       </div>
