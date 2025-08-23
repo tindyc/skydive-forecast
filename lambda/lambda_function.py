@@ -42,7 +42,7 @@ def describe_weather(clouds, rain):
         return "Overcast"
 
 def lambda_handler(event, context):
-    # ✅ Handle CORS preflight
+    # Handle CORS preflight
     if event.get("requestContext", {}).get("http", {}).get("method") == "OPTIONS":
         return {
             "statusCode": 200,

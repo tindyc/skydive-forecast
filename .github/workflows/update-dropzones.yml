@@ -1,10 +1,10 @@
 name: Update Dropzones
 
 on:
-  workflow_dispatch:  
+  workflow_dispatch:   
 
 permissions:
-  contents: write  
+  contents: write   
 
 jobs:
   scrape-and-deploy:
@@ -41,14 +41,14 @@ jobs:
           git push
 
       # ----------------------------
-      # 🚀 Deploy Lambda
+      #  Deploy Lambda
       # ----------------------------
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1   
+          aws-region: us-east-1  
 
       - name: Package Lambda
         run: |
@@ -60,6 +60,9 @@ jobs:
             --function-name skydiving-forecast \
             --zip-file fileb://lambda.zip
 
+      - name: Wait for Lambda update
+        run: sleep 20  
+
       - name: Ensure Lambda timeout is 30s
         run: |
           aws lambda update-function-configuration \
@@ -67,7 +70,7 @@ jobs:
             --timeout 30
 
       # ----------------------------
-      # ✅ Print Lambda configuration
+      # Print Lambda configuration
       # ----------------------------
       - name: Show Lambda details
         run: |
