@@ -40,7 +40,7 @@ export default function DropzonePage() {
   }, [name]);
 
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
-  if (!forecast.length) return <p>Loading forecast...</p>;
+  if (!forecast.length) return <p>Checking the sky for you...</p>;
 
   return (
     <div className="dropzone-page forecast-wrapper">

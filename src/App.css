@@ -69,6 +69,7 @@ main {
   gap: 1.5rem;
   width: 100%;
   max-width: 1000px;
+  padding-bottom: 20px;
 }
 
 .dropzone-card {
@@ -270,4 +271,129 @@ footer {
   .mini-weather-icon {
     font-size: 3.8rem;
   }
+}
+/* === Tooltip === */
+.title-with-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.title-with-info h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #f0f6fc;
+}
+
+.info-icon {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #58a6ff;
+}
+
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: 260px;
+  background: #161b22;
+  color: #e6edf3;
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: 8px;
+  position: absolute;
+  z-index: 10;
+  bottom: 125%; /* 👆 show above icon */
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  transition: opacity 0.25s ease-in-out;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.info-icon:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* === JUMP CONDITIONS BOX === */
+.jump-conditions {
+  background: #161b22;
+  color: #e6edf3;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  text-align: left;   /* 👈 keep natural inline flow */
+}
+
+.jump-conditions h3 {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #58a6ff;
+}
+
+.jump-conditions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.jump-conditions li {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.5;   /* 👈 fix spacing */
+  display: block;     /* 👈 prevent column-like layout */
+  white-space: normal;/* 👈 wrap normally */
+}
+
+.jump-conditions strong {
+  color: #fff;
+}
+
+.conditions-note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #8b949e;
+  text-align: center;
+}
+
+.conditions-note a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+.conditions-note a:hover {
+  text-decoration: underline;
+}
+
+/* Intro Section */
+.intro {
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 800px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: #161b22;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.intro h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #58a6ff;
+}
+
+.intro p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #e6edf3;
 }
