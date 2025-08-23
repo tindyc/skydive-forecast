@@ -3,7 +3,7 @@ name: Update Dropzones
 on:
   schedule:
     - cron: "0 9 * * 1"   # every Monday at 09:00 UTC
-  workflow_dispatch:       # allow manual run from GitHub Actions tab
+  workflow_dispatch:       # allow manual run from the Actions tab
 
 jobs:
   scrape:
