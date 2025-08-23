@@ -28,9 +28,9 @@ I’ve kept things lightweight but practical:
 - **React Router** – enables dropzone pages and navigation (`App.tsx` has a simple navbar and routes).  
   - Configured with `basename="/skydive-forecast"` so it works when deployed on **GitHub Pages**, where apps are served from a subpath instead of the domain root.  
 
-- **Custom CSS (Dark Theme)** – hand-crafted styles in `App.css` and `WeatherCard.css` for a modern, dark, skydiving-friendly look.  
+- **CSS** – customised styles in `App.css` and `WeatherCard.css` for a modern, dark, skydiving-friendly look.  
 
-- **AWS Lambda + API Gateway (Serverless Backend)** – the real workhorse of the app.  
+- **AWS Lambda + API Gateway (Serverless Backend)** – the core of the app.  
   - The Lambda function fetches **10 days of forecast data** from [Open-Meteo](https://open-meteo.com/) for each dropzone.  
   - Converts **wind speed** from km/h → mph so it makes sense to UK jumpers.  
   - Applies **skydiving-specific safety rules** to decide if each day is a “GOOD ✅” or “NO Jumping ❌” day for **beginners vs experienced** skydivers.  
@@ -51,6 +51,40 @@ I’ve kept things lightweight but practical:
 - **Lambda**: I’m not running a full backend, just need to fetch and filter weather. Serverless is simple, and scales without me worrying.  
 - **Custom CSS**: Could’ve used a UI library, but I wanted full control to refresh my CSS skills. The design is minimal, following a less is more style.  
 
+---
+## 🏗️ Architecture 🌐 API Gateway Setup  
+
+The project runs as a lightweight serverless full-stack app:
+
+![Architecture Diagram](src/assets/img/architecture.png)
+
+### How It Works:
+
+#### React Frontend (GitHub Pages)
+
+Users select a dropzone → app makes a fetch request.
+
+#### API Gateway (HTTP API)
+
+Stage: $default → API is reachable at:
+```
+https://<api-id>.execute-api.<region>.amazonaws.com/
+```
+(no /default path required).
+
+Route: ANY / → all requests at / are sent to Lambda.
+
+### AWS Lambda (Python)
+
+Fetches Open-Meteo API for each dropzone.
+
+Converts wind speeds (km/h → mph).
+
+Applies beginner vs experienced jump rules.
+
+Returns a structured JSON response.
+
+#### Frontend consumes JSON → Displays forecasts + “GOOD ✅ / NO ❌” jump indicators.
 ---
 
 ## 🚀 Getting Started  
@@ -82,11 +116,43 @@ npm run deploy
 ```
 
 ## Future Ideas
-Add more dropzones (UK & worldwide 🌍).
+1. Add more dropzones (UK & worldwide 🌍).
 
-Notifications when a “GOOD ✅” day is coming up.
+2. Notifications/alerts when a “GOOD ✅” day is coming up.
 
-Add altitude-adjusted temperature & wind conditions.
+3. Altitude-adjusted forecasts – calculate conditions at jump altitude (not just ground).
+
+4. Data analytics & graphs:
+
+* Use Pandas to process the fetched weather data.
+
+* Show averages, min, max of wind speed, temperature, and cloud cover.
+
+* Highlight how many “GOOD ✅” days are expected in the next 10 days.
+
+* Add trend charts (line graphs of wind speeds, temperatures, rain probability).
+
+5. Visual dashboards:
+
+* Bar charts for “jumpable vs no-jump days” per dropzone.
+
+* Pie charts comparing beginner vs experienced safe days.
+
+* Rolling averages to show seasonal patterns (e.g., best months to jump).
+
+6. User experience features:
+
+* Allow users to favourite dropzones and view combined stats.
+
+* Compare two dropzones side by side (e.g., Hibaldstow vs Langar).
+
+* Export reports (PDF or CSV) with conditions summary.
+
+7. Machine learning ideas:
+
+* Predict the best jump days using past data + forecast trends.
+
+* Show “confidence scores” for forecasts.
 
 ## 🙏 Acknowledgements
 

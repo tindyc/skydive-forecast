@@ -12,7 +12,7 @@ type ForecastDay = {
   cloudcover_mean: number;
   status_beginner: string;
   status_experienced: string;
-  description: string;   // 👈 add here
+  description: string;
 };
 
 export default function DropzonePage() {
@@ -22,18 +22,29 @@ export default function DropzonePage() {
   const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
 
   useEffect(() => {
-    fetch(
-      "https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/default/skydiving-forecast"
-    )
+    fetch("https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch forecast");
         return res.json();
       })
       .then((data) => {
-        const dzData = data[name || ""];
+        // ✅ Handle API Gateway proxy wrapping
+        let parsed: any = {};
+        if (data.body) {
+          try {
+            parsed = JSON.parse(data.body);
+          } catch (e) {
+            console.error("Failed to parse API body:", e);
+          }
+        } else {
+          parsed = data;
+        }
+
+        // ✅ Look up this dropzone’s forecast
+        const dzData = parsed.forecasts?.[name || ""];
         if (dzData) {
           setForecast(dzData);
-          setSelectedDay(dzData[0]); // show today’s forecast by default
+          setSelectedDay(dzData[0]); // today’s forecast by default
         }
       })
       .catch((err) => setError(err.message));
@@ -68,7 +79,6 @@ export default function DropzonePage() {
             }`}
             onClick={() => setSelectedDay(day)}
           >
-            {/* Simplified WeatherCard for mini cards */}
             <WeatherCard day={day} isBig={false} />
           </div>
         ))}

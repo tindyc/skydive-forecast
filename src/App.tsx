@@ -1,5 +1,6 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import DropzonePage from "./pages/DropzonePage";
 import "./App.css";
 
@@ -17,21 +18,45 @@ function Navbar() {
 }
 
 function HomePage() {
-  const dropzones = ["Hibaldstow", "Langar", "Dunkeswell"];
+  const [dropzones, setDropzones] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/")
+      .then((res) => res.json())
+      .then((data) => {
+        let parsed: any = {};
+        if (data.body) {
+          try {
+            parsed = JSON.parse(data.body); 
+          } catch (e) {
+            console.error("Failed to parse API body:", e);
+          }
+        } else {
+          parsed = data;
+        }
+
+        if (parsed.dropzones) {
+          setDropzones(parsed.dropzones);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch dropzones:", err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <main>
-      {/* 👋 Greeting / Intro Section */}
       <section className="intro">
         <h1>Welcome to Skydive Forecast 🌤️</h1>
         <p>
           Planning a jump? This app gives you the latest weather forecasts for UK dropzones and tells you whether 
-          it’s safe to take to the skies. <br />
-          From wind speeds to cloud cover, we’ve got you covered !
+          it’s safe to take to the skies.
         </p>
       </section>
 
-      {/* Title with info tooltip */}
       <div className="title-with-info">
         <h2>Select a Dropzone</h2>
         <span className="info-icon">
@@ -42,8 +67,9 @@ function HomePage() {
         </span>
       </div>
 
-      {/* Dropzone grid */}
       <div className="dropzone-grid">
+        {loading && <p>Loading dropzones...</p>}
+        {!loading && dropzones.length === 0 && <p>No dropzones available.</p>}
         {dropzones.map((dz) => (
           <Link key={dz} to={`/dropzone/${dz}`} className="dropzone-card">
             {dz}
@@ -51,28 +77,18 @@ function HomePage() {
         ))}
       </div>
 
-      {/* Jump Conditions Section */}
       <section className="jump-conditions">
         <h3>Safe Jumping Conditions</h3>
         <ul>
-          <li>
-            🌬️ <strong>Wind:</strong> Beginners should not jump if winds exceed <strong>15 mph (24 km/h)</strong>. 
-            Experienced skydivers may jump in winds up to <strong>30 mph (48 km/h)</strong>.
-          </li>
-          <li>
-            🌧️ <strong>Rain:</strong> Skydives are <strong>not conducted in rain</strong> as raindrops at freefall speeds can be painful and unsafe.
-          </li>
-          <li>
-            ☁️ <strong>Cloud Cover:</strong> British skydiving rules require <strong>clear visibility</strong> and safe separation from clouds for spotting and navigation.
-          </li>
-          <li>
-            🌡️ <strong>Temperature:</strong> Cold conditions can be managed with proper gear, but most dropzones won’t operate if freezing at altitude.
-          </li>
+          <li>🌬️ Beginners: max 15 mph | Experienced: max 30 mph</li>
+          <li>🌧️ No jumping in rain</li>
+          <li>☁️ Clear visibility required</li>
+          <li>🌡️ Avoid freezing conditions</li>
         </ul>
         <p className="conditions-note">
           📖 Source:{" "}
           <a href="https://britishskydiving.org/" target="_blank" rel="noopener noreferrer">
-            British Skydiving (UK Parachute Association)
+            British Skydiving
           </a>
         </p>
       </section>
@@ -85,12 +101,10 @@ function App() {
     <Router basename="/skydive-forecast">
       <div className="app">
         <Navbar />
-
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/dropzone/:name" element={<DropzonePage />} />
         </Routes>
-
         <footer>
           <p> © <strong>TindyC</strong> ☁︎</p>
         </footer>
