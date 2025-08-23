@@ -5,6 +5,13 @@ import DropzonePage from "./pages/DropzonePage";
 import "./App.css";
 import { slugify } from "./utils/slug";
 
+// Restore GitHub Pages redirect if present
+const redirect = sessionStorage.redirect;
+if (redirect) {
+  delete sessionStorage.redirect;
+  window.history.replaceState(null, "", redirect);
+}
+
 function Navbar() {
   const navigate = useNavigate();
 
