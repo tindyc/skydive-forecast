@@ -1,6 +1,6 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DropzonePage from "./pages/DropzonePage";
 import "./App.css";
 import { slugify } from "./utils/slug";
@@ -20,20 +20,24 @@ function Navbar() {
 
 function HomePage() {
   const [dropzones, setDropzones] = useState<string[]>([]);
+  const [filtered, setFiltered] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [highlightIndex, setHighlightIndex] = useState(-1); // track which item is focused
+  const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}dropzones.json`)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Failed to load dropzones.json: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Failed to load dropzones.json: ${res.status}`);
         return res.json();
       })
       .then((data) => {
         if (Array.isArray(data)) {
           const names = data.map((dz: { name: string }) => dz.name);
           setDropzones(names);
+          setFiltered(names);
         } else {
           console.error("dropzones.json is not an array", data);
         }
@@ -44,6 +48,30 @@ function HomePage() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    const results = dropzones.filter((dz) =>
+      dz.toLowerCase().includes(search.toLowerCase())
+    );
+    setFiltered(results);
+    setHighlightIndex(-1); // reset highlight when search changes
+  }, [search, dropzones]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!filtered.length) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightIndex((prev) => (prev + 1) % filtered.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightIndex((prev) => (prev - 1 + filtered.length) % filtered.length);
+    } else if (e.key === "Enter" && highlightIndex >= 0) {
+      e.preventDefault();
+      navigate(`/dropzone/${slugify(filtered[highlightIndex])}`);
+      setSearch(""); // clear search after navigation
+    }
+  };
 
   return (
     <main>
@@ -60,15 +88,46 @@ function HomePage() {
         <span className="info-icon">
           ℹ️
           <span className="tooltip">
-            Select a dropzone and check the weather conditions to see if it’s safe for jumping.
+            Start typing to quickly find a dropzone by name.
           </span>
         </span>
       </div>
 
+      {/* 🔍 Search Bar with Dropdown + Keyboard Navigation */}
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-bar"
+          placeholder="Search dropzones..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        {search && (
+          <ul className="search-dropdown" ref={dropdownRef}>
+            {filtered.map((dz, i) => (
+              <li
+                key={dz}
+                className={i === highlightIndex ? "highlighted" : ""}
+                onMouseEnter={() => setHighlightIndex(i)}
+                onClick={() => {
+                  navigate(`/dropzone/${slugify(dz)}`);
+                  setSearch("");
+                }}
+              >
+                {dz}
+              </li>
+            ))}
+            {filtered.length === 0 && <li className="no-results">No results</li>}
+          </ul>
+        )}
+      </div>
+
+      {/* 📋 Grid of Dropzones */}
       <div className="dropzone-grid">
         {loading && <p>Loading dropzones...</p>}
-        {!loading && dropzones.length === 0 && <p>No dropzones available.</p>}
-        {dropzones.map((dz) => (
+        {!loading && filtered.length === 0 && <p>No dropzones available.</p>}
+        {filtered.map((dz) => (
           <Link key={dz} to={`/dropzone/${slugify(dz)}`} className="dropzone-card">
             {dz}
           </Link>

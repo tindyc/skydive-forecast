@@ -9,13 +9,29 @@ Because sometimes the biggest leap isn’t out of the plane—it’s trusting th
 
 ## ✨ Features  
 
-- **UK Dropzones** – now includes *all official [British Skydiving](https://britishskydiving.org/find-drop-zone/) dropzones* (scraped automatically).
+## ✨ Features  
 
-- **Beginner vs Experienced** – conditions are assessed differently depending on skill level.  
-- **Weather Insights** – daily forecasts: temperature, rain, wind (in mph), cloud cover, and a simple description.  
+- **UK Dropzones** – now includes *all official [British Skydiving](https://britishskydiving.org/find-drop-zone/)* dropzones (scraped automatically).  
+
+- **🔍 Smart Dropzone Search** – find your DZ quickly with a styled search bar:  
+  - Autocomplete suggestions appear as you type.  
+  - Navigate with **⬆️ / ⬇️ keys** and press **Enter** to jump directly.  
+  - Mobile-friendly and centered design for easy use on any screen.  
+
+- **Beginner vs Experienced** – conditions assessed differently depending on skill level.  
+
+- **Weather Insights** – daily forecasts include:  
+  - 🌡 Temperature  
+  - 🌧 Rain chance  
+  - 💨 Wind speed (mph)  
+  - ☁️ Cloud cover  
+  - ✍️ A simple description of conditions  
+
 - **Safe/No Jump Indicators** – “GOOD ✅” or “NO Jumping ❌” guidance for each day.  
-- **Mobile-friendly UI** – scrollable forecast cards and responsive design.  
-- **Educational Tooltips** – explain safe conditions, sourced from British Skydiving.  
+
+- **Mobile-friendly UI** – scrollable forecast cards and responsive layout.  
+
+- **Educational Tooltips** – explain safe skydiving conditions, sourced from [British Skydiving](https://britishskydiving.org/).  
 
 ---
 
