@@ -93,6 +93,5 @@ British Skydiving for the official safety guidelines.
 
 Open-Meteo for free forecast data.
 
-And everyone who’s built the tools I’m borrowing to get this project off the ground (pun intended).
-
+And everyone who’s built the tools and packages I’m borrowing to get this project off the ground.
 
