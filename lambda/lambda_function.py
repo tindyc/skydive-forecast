@@ -2,8 +2,7 @@ import json
 import urllib.request
 
 # Raw GitHub URL for dropzones.json (kept in your repo)
-DZ_URL = "https://raw.githubusercontent.com/tindyc/skydive-forecast/main/data/dropzones.json"
-
+DZ_URL = "https://raw.githubusercontent.com/tindyc/skydive-forecast/main/public/dropzones.json"
 
 def get_dropzones():
     """Fetch the latest dropzones.json from GitHub safely."""
