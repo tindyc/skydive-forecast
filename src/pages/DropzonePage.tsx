@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
 import "../components/WeatherCard.css";
+import { deslugify } from "../utils/slug"; // ✅ use shared helper
 
 type ForecastDay = {
   date: string;
@@ -14,18 +15,44 @@ type ForecastDay = {
   description: string;
 };
 
+type Dropzone = {
+  name: string;
+  lat: number;
+  lon: number;
+};
+
 export default function DropzonePage() {
-  const { name } = useParams<{ name: string }>();
+  const { name: slug } = useParams<{ name: string }>();
+
+  const [dropzones, setDropzones] = useState<Dropzone[]>([]);
+  const [dropzoneName, setDropzoneName] = useState<string>("");
   const [forecast, setForecast] = useState<ForecastDay[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
 
+  // ✅ Fetch dropzones.json from /public
   useEffect(() => {
-    if (!name) return;
+    fetch(`${import.meta.env.BASE_URL}dropzones.json`)
+      .then((res) => res.json())
+      .then((data: Dropzone[]) => {
+        setDropzones(data);
+
+        if (slug) {
+          const names = data.map((dz) => dz.name);
+          const original = deslugify(slug, names);
+          setDropzoneName(original);
+        }
+      })
+      .catch((err) => console.error("Failed to load dropzones:", err));
+  }, [slug]);
+
+  // ✅ Fetch forecast from Lambda when dropzoneName is resolved
+  useEffect(() => {
+    if (!dropzoneName) return;
 
     fetch(
       `https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/?dz=${encodeURIComponent(
-        decodeURIComponent(name)
+        dropzoneName
       )}`
     )
       .then((res) => {
@@ -33,7 +60,6 @@ export default function DropzonePage() {
         return res.json();
       })
       .then((data) => {
-        // API Gateway may wrap body in a string
         const parsed = data.body ? JSON.parse(data.body) : data;
 
         if (parsed.forecast && Array.isArray(parsed.forecast)) {
@@ -46,7 +72,7 @@ export default function DropzonePage() {
         }
       })
       .catch((err) => setError(err.message));
-  }, [name]);
+  }, [dropzoneName]);
 
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
   if (!forecast.length) return <p>Checking the sky for you...</p>;
@@ -54,11 +80,7 @@ export default function DropzonePage() {
   return (
     <div className="dropzone-page forecast-wrapper">
       {/* Dropzone Name */}
-      {name && (
-        <h2 className="dropzone-title">
-          {decodeURIComponent(name).replace(/-/g, " ")}
-        </h2>
-      )}
+      {dropzoneName && <h2 className="dropzone-title">{dropzoneName}</h2>}
 
       {/* Big selected card */}
       {selectedDay && (

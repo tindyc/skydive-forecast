@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react
 import { useState, useEffect } from "react";
 import DropzonePage from "./pages/DropzonePage";
 import "./App.css";
+import { slugify } from "./utils/slug";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}dropzones.json`) // ✅ works locally and on GitHub Pages
+    fetch(`${import.meta.env.BASE_URL}dropzones.json`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`Failed to load dropzones.json: ${res.status}`);
@@ -68,7 +69,7 @@ function HomePage() {
         {loading && <p>Loading dropzones...</p>}
         {!loading && dropzones.length === 0 && <p>No dropzones available.</p>}
         {dropzones.map((dz) => (
-          <Link key={dz} to={`/dropzone/${dz}`} className="dropzone-card">
+          <Link key={dz} to={`/dropzone/${slugify(dz)}`} className="dropzone-card">
             {dz}
           </Link>
         ))}
