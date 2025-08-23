@@ -18,7 +18,7 @@ export default defineConfig({
       },
     },
   ],
-  base: "/skydive-forecast/",  // 👈 IMPORTANT: must match your repo name exactly
+  base: "/skydive-forecast/", 
   build: {
     outDir: "dist",
   },
