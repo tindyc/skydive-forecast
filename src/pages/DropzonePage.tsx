@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
 import "../components/WeatherCard.css";
-import { deslugify } from "../utils/slug"; // ✅ use shared helper
+import { deslugify } from "../utils/slug"; // 
+import Preloader from "../components/Preloader";
 
 type ForecastDay = {
   date: string;
@@ -75,7 +76,7 @@ export default function DropzonePage() {
   }, [dropzoneName]);
 
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
-  if (!forecast.length) return <p>Checking the sky for you...</p>;
+  if (!forecast.length) return <Preloader />; 
 
   return (
     <div className="dropzone-page forecast-wrapper">

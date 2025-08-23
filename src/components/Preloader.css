@@ -1,0 +1,40 @@
+.preloader {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Background */
+.sky-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: panBackground 20s linear infinite;
+}
+
+@keyframes panBackground {
+  from { transform: scale(1.1) translateX(0); }
+  to   { transform: scale(1.1) translateX(-5%); }
+}
+
+/* Skydiver */
+.skydiver {
+  position: absolute;
+  width: 420px;               
+  top: -150px;                /* start near top */
+  left: 80%;                  /* 👈 start much further right */
+  transform: translateX(-50%);
+  animation: driftDownLeft 4s ease-in-out infinite;
+}
+
+@keyframes driftDownLeft {
+  0%   { top: -150px; left: 80%; transform: translateX(-50%) rotate(12deg) scale(1); }
+  40%  { top: 25%; left: 65%; transform: translateX(-50%) rotate(6deg) scale(1.05); }
+  70%  { top: 50%; left: 55%; transform: translateX(-50%) rotate(-6deg) scale(1.05); }
+  100% { top: 70%; left: 45%; transform: translateX(-50%) rotate(0deg) scale(1); }
+}
+

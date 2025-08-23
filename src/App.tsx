@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import DropzonePage from "./pages/DropzonePage";
 import "./App.css";
 import { slugify } from "./utils/slug";
+import Preloader from "./components/Preloader";
 
 // Restore GitHub Pages redirect if present
 const redirect = sessionStorage.redirect;
@@ -79,6 +80,9 @@ function HomePage() {
       setSearch(""); // clear search after navigation
     }
   };
+
+    // Show Preloader while dropzones.json is loading
+  if (loading) return <Preloader />;
 
   return (
     <main>
