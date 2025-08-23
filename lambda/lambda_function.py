@@ -1,7 +1,7 @@
 import json
 import urllib.request
 
-# Raw GitHub URL for dropzones.json
+# Raw GitHub URL for dropzones.json (kept in your repo)
 DZ_URL = "https://raw.githubusercontent.com/tindyc/skydive-forecast/main/data/dropzones.json"
 
 
@@ -58,79 +58,70 @@ def lambda_handler(event, context):
             "body": "",
         }
 
-    report = {}
-    dropzones = get_dropzones()
+    # ✅ Get query parameter (dropzone name)
+    query_params = event.get("queryStringParameters") or {}
+    dz_name = query_params.get("dz")
 
-    if not dropzones:
+    if not dz_name:
         return {
-            "statusCode": 500,
+            "statusCode": 400,
             "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({"error": "No dropzones available"}),
+            "body": json.dumps({"error": "Missing ?dz=DropzoneName parameter"}),
         }
 
-    for dz in dropzones:
-        if not dz.get("lat") or not dz.get("lon"):
-            print(f"⚠️ Skipping {dz['name']} - missing coords")
-            continue
+    # ✅ Load dropzones and find the requested one
+    dropzones = get_dropzones()
+    dz = next((d for d in dropzones if d["name"].lower() == dz_name.lower()), None)
 
-        url = (
-            f"https://api.open-meteo.com/v1/forecast?"
-            f"latitude={dz['lat']}&longitude={dz['lon']}"
-            "&daily=temperature_2m_max,precipitation_sum,windspeed_10m_max,cloudcover_mean"
-            "&forecast_days=10&timezone=auto"
-        )
+    if not dz or not dz.get("lat") or not dz.get("lon"):
+        return {
+            "statusCode": 404,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"error": f"Dropzone '{dz_name}' not found"}),
+        }
 
-        try:
-            with urllib.request.urlopen(url) as response:
-                data = json.loads(response.read())
+    # ✅ Build weather API URL for this DZ only
+    url = (
+        f"https://api.open-meteo.com/v1/forecast?"
+        f"latitude={dz['lat']}&longitude={dz['lon']}"
+        "&daily=temperature_2m_max,precipitation_sum,windspeed_10m_max,cloudcover_mean"
+        "&forecast_days=10&timezone=auto"
+    )
 
-            if "daily" not in data:
-                print(f"⚠️ No daily forecast in response for {dz['name']}")
-                report[dz["name"]] = {"error": "No forecast data"}
-                continue
-
-            daily = data["daily"]
-            dz_report = []
-            for i, date in enumerate(daily["time"]):
-                clouds = daily["cloudcover_mean"][i]
-                rain = daily["precipitation_sum"][i]
-                wind_kmh = daily["windspeed_10m_max"][i]
-                wind_mph = round(wind_kmh * 0.621371, 1)  # kmh→mph
-
-                day = {
-                    "date": date,
-                    "temperature_2m_max": daily["temperature_2m_max"][i],
-                    "precipitation_sum": rain,
-                    "windspeed_10m_max": wind_mph,
-                    "cloudcover_mean": clouds,
-                    "description": describe_weather(clouds, rain),
-                }
-                day["status_beginner"] = (
-                    "GOOD ✅" if check_conditions(day, "beginner") else "NO Jumping ❌"
-                )
-                day["status_experienced"] = (
-                    "GOOD ✅"
-                    if check_conditions(day, "experienced")
-                    else "NO Jumping ❌"
-                )
-                dz_report.append(day)
-
-            report[dz["name"]] = dz_report
-
-        except Exception as e:
-            print(f"❌ Error fetching forecast for {dz['name']}: {e}")
-            report[dz["name"]] = {
-                "error": f"Failed to fetch forecast: {str(e)}"
-            }
-
-    # ✅ Always return JSON
     try:
-        response_body = {
-            "dropzones": [
-                dz["name"] for dz in dropzones if dz.get("lat") and dz.get("lon")
-            ],
-            "forecasts": report,
-        }
+        with urllib.request.urlopen(url) as response:
+            data = json.loads(response.read())
+
+        if "daily" not in data:
+            raise Exception("No daily forecast in response")
+
+        daily = data["daily"]
+        dz_report = []
+        for i, date in enumerate(daily["time"]):
+            clouds = daily["cloudcover_mean"][i]
+            rain = daily["precipitation_sum"][i]
+            wind_kmh = daily["windspeed_10m_max"][i]
+            wind_mph = round(wind_kmh * 0.621371, 1)  # km/h → mph
+
+            day = {
+                "date": date,
+                "temperature_2m_max": daily["temperature_2m_max"][i],
+                "precipitation_sum": rain,
+                "windspeed_10m_max": wind_mph,
+                "cloudcover_mean": clouds,
+                "description": describe_weather(clouds, rain),
+            }
+            day["status_beginner"] = (
+                "GOOD ✅" if check_conditions(day, "beginner") else "NO Jumping ❌"
+            )
+            day["status_experienced"] = (
+                "GOOD ✅"
+                if check_conditions(day, "experienced")
+                else "NO Jumping ❌"
+            )
+            dz_report.append(day)
+
+        # ✅ Success response
         return {
             "statusCode": 200,
             "headers": {
@@ -139,12 +130,16 @@ def lambda_handler(event, context):
                 "Access-Control-Allow-Methods": "GET,OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type",
             },
-            "body": json.dumps(response_body),
+            "body": json.dumps({
+                "dropzone": dz_name,
+                "forecast": dz_report
+            }),
         }
+
     except Exception as e:
-        print(f"❌ Fatal error building response: {e}")
+        print(f"❌ Error fetching forecast for {dz_name}: {e}")
         return {
             "statusCode": 500,
             "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({"error": "Lambda failed", "details": str(e)}),
+            "body": json.dumps({"error": f"Failed to fetch forecast: {str(e)}"}),
         }

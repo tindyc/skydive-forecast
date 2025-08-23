@@ -1,4 +1,3 @@
-// src/pages/DropzonePage.tsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
@@ -22,29 +21,27 @@ export default function DropzonePage() {
   const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
 
   useEffect(() => {
-    fetch("https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/")
+    if (!name) return;
+
+    // ✅ Call Lambda with ?dz=<dropzoneName>
+    fetch(
+      `https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/?dz=${encodeURIComponent(
+        name
+      )}`
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch forecast");
         return res.json();
       })
       .then((data) => {
-        // ✅ Handle API Gateway proxy wrapping
-        let parsed: any = {};
-        if (data.body) {
-          try {
-            parsed = JSON.parse(data.body);
-          } catch (e) {
-            console.error("Failed to parse API body:", e);
-          }
-        } else {
-          parsed = data;
-        }
+        // If Lambda is behind API Gateway proxy, data might be stringified in "body"
+        const parsed = data.body ? JSON.parse(data.body) : data;
 
-        // ✅ Look up this dropzone’s forecast
-        const dzData = parsed.forecasts?.[name || ""];
-        if (dzData) {
-          setForecast(dzData);
-          setSelectedDay(dzData[0]); // today’s forecast by default
+        if (parsed.forecast) {
+          setForecast(parsed.forecast);
+          setSelectedDay(parsed.forecast[0]); // today’s forecast by default
+        } else {
+          setError("No forecast available for this dropzone");
         }
       })
       .catch((err) => setError(err.message));

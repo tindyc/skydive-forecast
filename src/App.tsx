@@ -1,6 +1,6 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import DropzonePage from "./pages/DropzonePage";
 import "./App.css";
 
@@ -22,27 +22,24 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/")
-      .then((res) => res.json())
-      .then((data) => {
-        let parsed: any = {};
-        if (data.body) {
-          try {
-            parsed = JSON.parse(data.body); 
-          } catch (e) {
-            console.error("Failed to parse API body:", e);
-          }
-        } else {
-          parsed = data;
+    fetch(`${import.meta.env.BASE_URL}dropzones.json`) // ✅ works locally and on GitHub Pages
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to load dropzones.json: ${res.status}`);
         }
-
-        if (parsed.dropzones) {
-          setDropzones(parsed.dropzones);
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const names = data.map((dz: { name: string }) => dz.name);
+          setDropzones(names);
+        } else {
+          console.error("dropzones.json is not an array", data);
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to fetch dropzones:", err);
+        console.error(err);
         setLoading(false);
       });
   }, []);
