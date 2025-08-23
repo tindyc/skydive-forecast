@@ -23,10 +23,9 @@ export default function DropzonePage() {
   useEffect(() => {
     if (!name) return;
 
-    // ✅ Call Lambda with ?dz=<dropzoneName>
     fetch(
       `https://m3dx4c3t5g.execute-api.us-east-1.amazonaws.com/?dz=${encodeURIComponent(
-        name
+        decodeURIComponent(name)
       )}`
     )
       .then((res) => {
@@ -34,12 +33,14 @@ export default function DropzonePage() {
         return res.json();
       })
       .then((data) => {
-        // If Lambda is behind API Gateway proxy, data might be stringified in "body"
+        // API Gateway may wrap body in a string
         const parsed = data.body ? JSON.parse(data.body) : data;
 
-        if (parsed.forecast) {
+        if (parsed.forecast && Array.isArray(parsed.forecast)) {
           setForecast(parsed.forecast);
-          setSelectedDay(parsed.forecast[0]); // today’s forecast by default
+          setSelectedDay(parsed.forecast[0]); // default to today
+        } else if (parsed.error) {
+          setError(parsed.error);
         } else {
           setError("No forecast available for this dropzone");
         }
