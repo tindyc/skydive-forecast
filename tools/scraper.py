@@ -9,13 +9,13 @@ load_dotenv()
 
 URL = "https://britishskydiving.org/find-drop-zone/"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DZ_JSON = os.path.join(BASE_DIR, "data", "dropzones.json")
 
-# ✅ Get key from environment variable
+DZ_JSON = os.path.join(BASE_DIR, "public", "dropzones.json")
+
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
 if not GOOGLE_API_KEY:
     raise RuntimeError("❌ GOOGLE_API_KEY not set. Please add it to your .env or environment.")
+
 
 def scrape_dropzones():
     """Scrape DZ names from British Skydiving using Playwright."""
@@ -24,7 +24,7 @@ def scrape_dropzones():
         page = browser.new_page()
         page.goto(URL)
 
-        # Wait for map markers to load (Google Maps adds div[title] for each DZ)
+        # Wait for map markers to load
         page.wait_for_selector("div[title]")
 
         elements = page.query_selector_all("div[title]")
@@ -38,6 +38,7 @@ def scrape_dropzones():
         browser.close()
         return sorted(set(names))
 
+
 def geocode_place(name):
     """Fetch coordinates for a DZ name using Google Geocoding API."""
     url = f"https://maps.googleapis.com/maps/api/geocode/json?address={name}+UK&key={GOOGLE_API_KEY}"
@@ -48,6 +49,7 @@ def geocode_place(name):
     print(f"⚠️ Could not geocode {name}: {resp.get('status')}")
     return None, None
 
+
 def load_known_dropzones():
     """Load existing DZs from JSON file, or return empty list if missing."""
     if os.path.exists(DZ_JSON):
@@ -55,12 +57,14 @@ def load_known_dropzones():
             return json.load(f)
     return []
 
+
 def save_dropzones(dropzones):
-    """Save DZs to data/dropzones.json."""
+    """Save DZs to public/dropzones.json (used by frontend + Lambda)."""
     os.makedirs(os.path.dirname(DZ_JSON), exist_ok=True)
     with open(DZ_JSON, "w") as f:
         json.dump(dropzones, f, indent=2)
     print(f"💾 Saved {len(dropzones)} dropzones to {DZ_JSON}")
+
 
 def main():
     scraped_names = scrape_dropzones()
@@ -71,17 +75,14 @@ def main():
     updated_dzs = []
 
     for name in scraped_names:
-        # Check if DZ already exists in JSON
         existing_dz = next((dz for dz in known_dzs if dz["name"] == name), None)
 
         if existing_dz:
-            # If it exists but has no coordinates, geocode it
             if existing_dz["lat"] is None or existing_dz["lon"] is None:
                 lat, lon = geocode_place(name)
                 existing_dz["lat"], existing_dz["lon"] = lat, lon
                 updated_dzs.append(existing_dz)
         else:
-            # Brand new DZ
             lat, lon = geocode_place(name)
             new_dz = {"name": name, "lat": lat, "lon": lon}
             known_dzs.append(new_dz)
@@ -100,6 +101,7 @@ def main():
         save_dropzones(known_dzs)
     else:
         print("\n👍 No updates needed, everything is up to date.")
+
 
 if __name__ == "__main__":
     main()
