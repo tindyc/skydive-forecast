@@ -1,5 +1,5 @@
 # 🪂 Skydive Forecast  
-[Production Site](https://tindyc.github.io/skydive-forecast/) 
+[🌐 Live Demo](https://tindyc.github.io/skydive-forecast/)  
 
 Planning a jump in the UK? This app helps skydivers check the latest weather at selected dropzones and see if conditions are safe for beginners or experienced jumpers.  
 
@@ -9,96 +9,144 @@ Because sometimes the biggest leap isn’t out of the plane—it’s trusting th
 
 ## ✨ Features  
 
-## ✨ Features  
+- **UK Dropzones** – includes *all official [British Skydiving](https://britishskydiving.org/find-drop-zone/)* dropzones (scraped automatically).  
 
-- **UK Dropzones** – now includes *all official [British Skydiving](https://britishskydiving.org/find-drop-zone/)* dropzones (scraped automatically).  
+- **🔍 Smart Dropzone Search**  
+  - Autocomplete suggestions while typing.  
+  - Navigate with **⬆️ / ⬇️ keys** + **Enter** to jump directly.  
+  - Mobile-friendly and responsive design.  
 
-- **🔍 Smart Dropzone Search** – find your DZ quickly with a styled search bar:  
-  - Autocomplete suggestions appear as you type.  
-  - Navigate with **⬆️ / ⬇️ keys** and press **Enter** to jump directly.  
-  - Mobile-friendly and centered design for easy use on any screen.  
-
-- **Beginner vs Experienced** – conditions assessed differently depending on skill level.  
+- **Beginner vs Experienced Rules** – conditions assessed differently for new vs seasoned skydivers.  
 
 - **Weather Insights** – daily forecasts include:  
-  - 🌡 Temperature  
-  - 🌧 Rain chance  
-  - 💨 Wind speed (mph)  
-  - ☁️ Cloud cover  
-  - ✍️ A simple description of conditions  
+  🌡 Temperature · 🌧 Rain chance · 💨 Wind speed (mph) · ☁️ Cloud cover · ✍️ Simple text summary  
 
-- **Safe/No Jump Indicators** – “GOOD ✅” or “NO Jumping ❌” guidance for each day.  
+- **Safe/No Jump Indicators** – “GOOD ✅” or “NO Jumping ❌” guidance per day.  
 
-- **Mobile-friendly UI** – scrollable forecast cards and responsive layout.  
+- **Mobile-friendly UI** – scrollable forecast cards, responsive layouts.  
 
-- **Educational Tooltips** – explain safe skydiving conditions, sourced from [British Skydiving](https://britishskydiving.org/).  
+- **Educational Tooltips** – explain safe skydiving conditions (sourced from [British Skydiving](https://britishskydiving.org/)).  
+
+---
+
+## 📊 New: Jump Stats & Visual Forecasts  
+
+I’ve added an **analytics layer** to help skydivers understand conditions at a glance — not just raw numbers.  
+
+### 🔹 Smarter Insights  
+The **backend now summarizes the raw forecast into meaningful insights**, including:
+ 
+- 🌡 **Average temperature** over the forecast period.  
+- 💨 **Average wind speed**.  
+- ✅ **Number of safe jump days** for Beginners vs Experienced skydivers.  
+- 🎯 **Best Jump Day** – automatically highlighted in a banner at the very top. Click it to instantly view full forecast details in the main card.
+
+
+#### Example Output  
+
+When you request the forecast for a dropzone, the app also returns an **analytics summary** like this for each selected dropzone:  
+
+```json
+"analytics": {
+  "avg_temp": 18.6,
+  "avg_wind": 12.2,
+  "jumpable_days_beginner": 3,
+  "jumpable_days_experienced": 6,
+  "total_days": 10
+}
+
+```
+---
+**Explained:**  
+- 🌡 **avg_temp** → average daily max temperature (**18.6°C**).  
+- 💨 **avg_wind** → average wind speed (**12.2 mph**).  
+- ✅ **jumpable_days_beginner** → safe days for beginners (**3 days**).  
+- ✅ **jumpable_days_experienced** → safe days for experienced skydivers (**6 days**).  
+- 📅 **total_days** → number of forecast days (**10**).  
+
+So in this example:  
+- Beginners can expect **3 safe days** in the next 10.  
+- Experienced skydivers have more flexibility with **6 safe days**.  
+- Average conditions are **18.6°C** with winds around **12 mph**.  
+
+---
+
+### 🔹 Easy-to-Read Visuals  
+
+The frontend uses **Recharts** to display:  
+- **Bar Chart** → safe days for Beginners vs Experienced.  
+- **Heatmap Calendar** → daily jumpability (🟢 good, 🟡 marginal, 🔴 unsafe).  
+- **Key Stats Cards** → quick view of average temp 🌡 and wind speed💨.  
 
 ---
 
 ## 🛠 Tech Stack  
 
-- **React + TypeScript** – component-based frontend.  
-- **React Router** – slug-based navigation (e.g. `/dropzone/skydive-langar`).  
-- **AWS Lambda + API Gateway** – serverless backend that fetches and processes forecasts.  
-- **Python Scraper** – scrapes dropzones from British Skydiving and geocodes them with Google Maps API.  
-- **GitHub Actions Workflow** – automates scraper → commit → Lambda deploy → frontend build & deploy.  
-- **Open-Meteo API** – free forecast data provider.  
+- **Frontend**  
+  - React + TypeScript  
+  - React Router – slug-based navigation (`/dropzone/skydive-langar`)  
+  - Recharts – interactive bar charts & heatmaps  
+  - Responsive CSS + tooltips  
+
+- **Backend**  
+  - AWS Lambda + API Gateway – serverless forecast API  
+  - Python + Pandas – data analytics & safety rules  
+  - Open-Meteo API – free forecast provider  
+
+- **Automation**  
+  - Python Scraper (Playwright + Google Geocoding API) – updates `dropzones.json` automatically  
+  - GitHub Actions – automates: scraper → commit → Lambda deploy → frontend build & deploy  
 
 ---
 
 ## 🚀 Phase 2 — Upgrades & Optimizations  
 
-This project has evolved significantly from **Phase 1** to **Phase 2**:
-
 ### 🔹 Automated Dropzones  
-- Added a **Python scraper (`tools/scraper.py`)** that fetches every dropzone name from [British Skydiving](https://britishskydiving.org/find-drop-zone/).  
-- Uses **Google Geocoding API** to attach lat/lon coordinates.  
-- Updates `public/dropzones.json`.
+- Python scraper (`tools/scraper.py`) fetches dropzone names from British Skydiving.  
+- Uses Google Geocoding API for lat/lon.  
+- Updates `public/dropzones.json` automatically.  
 
 ### 🔹 CI/CD with GitHub Actions  
-- New workflow (`.github/workflows/update-dropzones.yml`) automates:  
-  - Running the scraper.  
-  - Committing updated `dropzones.json` to `main`.  
-  - Deploying updated Lambda code.  
-  - Building & publishing the frontend to GitHub Pages.  
-- Triggered manually (`workflow_dispatch`) → keeps costs within free tier.  
+- Workflow (`.github/workflows/update-dropzones.yml`) automates:  
+  - Running the scraper  
+  - Committing `dropzones.json`  
+  - Deploying Lambda  
+  - Building & publishing frontend to GitHub Pages  
 
 ### 🔹 Optimized Lambda  
-- **Phase 1**: Lambda fetched forecasts for *all dropzones at once* → very slow.  
-- **Phase 2**: Lambda now:  
-  - Loads the latest `dropzones.json` directly from GitHub.  
-  - Fetches **only the requested dropzone’s forecast** via `?dz=DropzoneName`.  
-  - Applies safety rules (wind, cloud cover, rain, temperature) for **beginner vs experienced** jumpers.  
-- ✅ Smaller payloads, much faster responses.  
-- ✅ Backend always in sync with the scraper’s output — no need to redeploy Lambda for new DZs.  
+- **Before:** fetched forecasts for *all dropzones* → very slow.  
+- **Now:** fetches only the **requested dropzone** via `?dz=DropzoneName`.  
+- Applies beginner/experienced rules server-side.  
+- ✅ Faster, smaller payloads  
+- ✅ Always in sync with scraper updates  
 
 ---
 
 ## 🏗️ Architecture  
 
-![Architecture Diagram](src/assets/img/architecture.png)
+<p align="center">
+  <img src="src/assets/img/architecture.svg" alt="Architecture Diagram" width="900"/>
+</p>
 
-### Flow
+### Flow  
 1. **Scraper (Python + Playwright + Google API)**  
-   - Scrapes dropzones → geocodes → saves to `public/dropzones.json`.  
-   - GitHub Actions commits updates automatically.  
+   - Scrapes dropzones → geocodes → saves to `dropzones.json`.  
+   - GitHub Actions commits updates.  
 
 2. **Frontend (React, GitHub Pages)**  
-   - Loads dropzones from `dropzones.json`.  
-   - Generates clean slugs (`/dropzone/skydive-langar`).  
+   - Loads dropzones from JSON.  
+   - Renders forecasts + analytics visually.  
 
-3. **API Gateway + Lambda (Python)**  
-   - Receives `?dz=Skydive Langar`.  
-   - Looks up lat/lon from `dropzones.json`.  
+3. **API Gateway + Lambda (Python + Pandas)**  
+   - Handles requests (`?dz=DropzoneName`).  
    - Fetches forecast from Open-Meteo.  
-   - Converts wind to mph, applies safety rules.  
-   - Returns structured JSON.  
+   - Applies safety rules.  
+   - Returns forecast + analytics + heatmap.  
 
-4. **Frontend**  
-   - Displays forecasts in interactive `WeatherCard`s with beginner/experienced jump indicators.  
+4. **Frontend UI**  
+   - Displays daily forecasts, analytics cards, bar charts, and heatmaps.  
 
 ---
-
 ## 🚀 Getting Started  
 
 1. **Clone the repo**  
@@ -129,9 +177,12 @@ npm run deploy
 
 ## Future Ideas
 1. Add more dropzones (UK & worldwide 🌍). 
-* All of England's dropzones now added by scraping from British Skydiving in Phrase2.
+
+ Added ✅
 
 2. Notifications/alerts when a “GOOD ✅” day is coming up.
+
+ Added ✅
 
 3. Altitude-adjusted forecasts – calculate conditions at jump altitude (not just ground).
 
@@ -140,6 +191,8 @@ npm run deploy
 * Use Pandas to process the fetched weather data.
 
 * Show averages, min, max of wind speed, temperature, and cloud cover.
+
+Added ✅
 
 * Highlight how many “GOOD ✅” days are expected in the next 10 days.
 
@@ -150,6 +203,8 @@ npm run deploy
 * Bar charts for “jumpable vs no-jump days” per dropzone.
 
 * Pie charts comparing beginner vs experienced safe days.
+
+Added ✅
 
 * Rolling averages to show seasonal patterns (e.g., best months to jump).
 
@@ -169,9 +224,7 @@ npm run deploy
 
 ## 🙏 Acknowledgements
 
-British Skydiving for the official safety guidelines and list of UK Dropzones.
-
-Open-Meteo for free forecast data.
-
-And everyone who’s built the tools and packages I’m borrowing to get this project off the ground.
-
+- [British Skydiving](https://britishskydiving.org/) – official safety guidelines & DZ list.  
+- [Open-Meteo](https://open-meteo.com/) – free weather data.  
+- [Adobe Firefly](https://www.adobe.com/sensei/generative-ai/firefly.html) – used to generate the skydiver cartoon character for the preloader animation.  
+- Tools & packages that power this project.  
