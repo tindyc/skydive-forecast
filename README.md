@@ -7,6 +7,25 @@ Because sometimes the biggest leap isn’t out of the plane—it’s trusting th
 
 ---
 
+## 🛠 Tech Stack  
+
+- **Frontend**  
+  - React + TypeScript  
+  - React Router – slug-based navigation (`/dropzone/skydive-langar`)  
+  - Recharts – interactive bar charts & heatmaps  
+  - Responsive CSS + tooltips  
+
+- **Backend**  
+  - AWS Lambda + API Gateway – serverless forecast API  
+  - Python + Pandas – data analytics & safety rules  
+  - Open-Meteo API – free forecast provider  
+
+- **Automation**  
+  - Python Scraper (Playwright + Google Geocoding API) – updates `dropzones.json` automatically  
+  - GitHub Actions – automates: scraper → commit → Lambda deploy → frontend build & deploy  
+
+---
+
 ## ✨ Features  
 
 - **UK Dropzones** – includes *all official [British Skydiving](https://britishskydiving.org/find-drop-zone/)* dropzones (scraped automatically).  
@@ -79,25 +98,47 @@ The frontend uses **Recharts** to display:
 - **Key Stats Cards** → quick view of average temp 🌡 and wind speed💨.  
 
 ---
+## 🖱️ Interactive & Responsive Forecast Cards  
 
-## 🛠 Tech Stack  
+One of the most useful features of the app is that you can **click on any forecast card** (either in the row of small daily cards, or in the heatmap) and it will instantly show **more details in the big main card**.  
 
-- **Frontend**  
-  - React + TypeScript  
-  - React Router – slug-based navigation (`/dropzone/skydive-langar`)  
-  - Recharts – interactive bar charts & heatmaps  
-  - Responsive CSS + tooltips  
+### 🔹 How it works :
+- The app always keeps track of **which day is currently selected**.  
+- By default, it starts with the **first forecast day**.  
+- When you **click on a mini card**, the app updates that selection.  
+- The big card then shows the details for the **selected day**.  
 
-- **Backend**  
-  - AWS Lambda + API Gateway – serverless forecast API  
-  - Python + Pandas – data analytics & safety rules  
-  - Open-Meteo API – free forecast provider  
+So you can quickly scroll through the week and see full details for any day with just one click.  
 
-- **Automation**  
-  - Python Scraper (Playwright + Google Geocoding API) – updates `dropzones.json` automatically  
-  - GitHub Actions – automates: scraper → commit → Lambda deploy → frontend build & deploy  
+### 🔹 Example in the code  
 
----
+```tsx
+// Keep track of which forecast day is selected
+const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
+
+// Show the first day by default
+setSelectedDay(parsed.forecast[0]);
+
+// Mini cards: when clicked, update the selected day
+<div
+  key={day.date}
+  className={`mini-weather-card ${
+    selectedDay?.date === day.date ? "active" : ""
+  }`}
+  onClick={() => setSelectedDay(day)}  // ✅ updates the selected day
+>
+  <WeatherCard day={day} isBig={false} />
+</div>
+
+// Big card: always shows the currently selected day
+{selectedDay && (
+  <div className="big-weather-card">
+    <WeatherCard day={selectedDay} isBig={true} />
+  </div>
+)}
+
+
+````
 
 ## 🚀 Phase 2 — Upgrades & Optimizations  
 
@@ -147,6 +188,21 @@ The frontend uses **Recharts** to display:
    - Displays daily forecasts, analytics cards, bar charts, and heatmaps.  
 
 ---
+### 📱 Responsiveness  
+
+The app has been styled in **CSS** to ensure the layout works across **all devices**:  
+
+- On **desktop screens**, the analytics card and heatmap sit **side by side**, filling the page width.  
+- On **mobile and tablets**, the cards stack vertically for easy scrolling.  
+- Mini forecast cards are **scrollable horizontally** on smaller screens.  
+- Font sizes, icons, and padding **adapt fluidly** so the experience feels natural whether you’re on a phone, tablet, or large monitor.  
+
+This means the interactive forecast is not only functional but also **responsive**, filling the page across all screen sizes.  
+
+![Responsive Mockup](src/assets/img/mockup.png)  
+
+---
+
 ## 🚀 Getting Started  
 
 1. **Clone the repo**  

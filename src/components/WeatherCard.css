@@ -18,7 +18,7 @@
   justify-content: center;
   width: 100%;
   margin: 20px 0;
-  flex: 0 0 auto; /* keep natural height */
+  flex: 0 0 auto; 
 }
 
 .big-weather-card .weather-card {
@@ -65,7 +65,7 @@
   margin: 24px auto 16px;
   padding: 10px 0;
   box-sizing: border-box;
-  flex: 1; /* ✅ make row fill remaining space */
+  flex: 1; 
   align-items: stretch;
   scroll-snap-type: x mandatory;
 }

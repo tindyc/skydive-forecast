@@ -453,7 +453,7 @@ footer {
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 40px; /* ✅ spacing between panels */
+    gap: 40px; 
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
