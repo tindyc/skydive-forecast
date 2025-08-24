@@ -336,20 +336,17 @@ footer {
 .jump-conditions {
   background: #161b22;
   color: #e6edf3;
-  padding: 1.5rem;
+  padding: 2rem;                /* ✅ more breathing room */
   border-radius: 12px;
-  margin-top: 2rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
   box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   text-align: left;
+  flex: 1;
 }
 
 .jump-conditions h3 {
   text-align: center;
   font-size: 1.6rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;       
   color: #58a6ff;
 }
 
@@ -360,12 +357,12 @@ footer {
 }
 
 .jump-conditions li {
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  display: block;
-  white-space: normal;
+  margin-bottom: 1.2rem;        
+  font-size: 1.05rem;          
+  line-height: 1.6;
+  text-align: center;
 }
+
 
 .jump-conditions strong {
   color: #fff;
@@ -408,9 +405,10 @@ footer {
   font-size: 1.1rem;
   line-height: 1.6;
   color: #e6edf3;
+  text-align: center;
 }
 
-/* Search bar container */
+/* === Search Bar === */
 .search-container {
   position: relative;
   margin: 1rem auto 2rem auto;
@@ -467,4 +465,62 @@ footer {
   .heatmap-panel {
     flex: 1;
   }
+}
+
+/* === Jump Conditions + How It Works Wrapper === */
+.jump-conditions-howitworks-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 2rem;
+}
+
+@media (min-width: 900px) {
+  .jump-conditions-howitworks-wrapper {
+    flex-direction: row;
+    gap: 40px;
+    align-items: stretch;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .jump-conditions,
+  .how-it-works {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 320px; /* ✅ equal baseline height */
+  }
+}
+
+/* === Shared Info Box Styling === */
+.info-box {
+  background: #161b22;
+  color: #e6edf3;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.info-box h3 {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #58a6ff;
+}
+
+/* === Remove default blue link color inside info boxes === */
+.info-box a {
+  color: inherit;           
+  text-decoration: underline; 
+  transition: color 0.2s;
+}
+
+.info-box a:hover {
+  color: #58a6ff;          
 }

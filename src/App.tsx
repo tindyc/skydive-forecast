@@ -146,21 +146,35 @@ function HomePage() {
         ))}
       </div>
 
-      <section className="jump-conditions">
-        <h3>Safe Jumping Conditions</h3>
-        <ul>
-          <li>🌬️ Beginners: max 15 mph | Experienced: max 30 mph</li>
-          <li>🌧️ No jumping in rain</li>
-          <li>☁️ Clear visibility required</li>
-          <li>🌡️ Avoid freezing conditions</li>
-        </ul>
-        <p className="conditions-note">
-          📖 Source:{" "}
-          <a href="https://britishskydiving.org/" target="_blank" rel="noopener noreferrer">
-            British Skydiving
-          </a>
-        </p>
-      </section>
+      {/* Safe Conditions + How It Works wrapper */}
+<div className="jump-conditions-howitworks-wrapper">
+<section className="jump-conditions info-box">
+  <h3>✅ Safe Jumping Conditions</h3>
+  <ul>
+    <li>🌬️ <strong>Beginners:</strong> safe up to 15 mph wind</li>
+    <li>💨 <strong>Experienced:</strong> safe up to 30 mph wind</li>
+    <li>🌧️ <strong>No rain:</strong> jumps are cancelled in wet conditions</li>
+    <li>☁️ <strong>Clear skies:</strong> good visibility is required</li>
+    <li>🌡️ <strong>Above freezing:</strong> avoid sub-zero conditions</li>
+  </ul>
+</section>
+
+  <section className="how-it-works info-box">
+    <h3>⚙️ How This App Works</h3>
+    <p>
+      🪂 Scrapes the list of official dropzones from{" "}
+      <a href="https://britishskydiving.org/find-drop-zone/" target="_blank" rel="noopener noreferrer">
+        British Skydiving
+      </a>.
+    </p>
+    <p>
+      🌍 Uses the <strong>Google Geocoding API</strong> to get coordinates for each dropzone.
+    </p>
+    <p>
+      🌤️ Fetches a 10-day forecast from the <strong>Open-Meteo API</strong>, showing you whether it’s safe to jump.
+    </p>
+  </section>
+</div>
     </main>
   );
 }
@@ -168,7 +182,7 @@ function HomePage() {
 function App() {
   return (
     <Router basename="/skydive-forecast">
-      <ScrollToTop /> {/* ✅ ensures scroll reset on route change */}
+      <ScrollToTop /> 
       <div className="app">
         <Navbar />
         <Routes>
