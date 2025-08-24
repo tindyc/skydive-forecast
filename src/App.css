@@ -16,7 +16,7 @@ html, body {
   display: flex;
   flex-direction: column;
   background: #0d1117; 
-  min-height: auto;   /* ✅ allow body to control vertical scroll */
+  min-height: auto;   
 }
 
 /* Navbar */
@@ -116,7 +116,7 @@ footer {
   width: 100%;
   padding: 1rem;
   box-sizing: border-box;
-  flex: unset;   /* ✅ don’t force full viewport height */
+  flex: unset;
 }
 
 /* --- BIG FEATURED CARD --- */
@@ -158,7 +158,7 @@ footer {
   flex-wrap: nowrap;
   width: 100%;
   max-width: 1200px;
-  overflow-x: auto;   /* ✅ horizontal scroll only */
+  overflow-x: auto;
   padding: 10px 0 20px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -176,7 +176,7 @@ footer {
   padding: 12px;
   text-align: center;
   color: #e6edf3;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
   cursor: pointer;
   transition: transform 0.2s ease, border 0.2s ease;
 }
@@ -297,7 +297,7 @@ footer {
 .tooltip {
   visibility: hidden;
   opacity: 0;
-  max-width: 260px;          /* ✅ was fixed width */
+  width: 260px;              
   background: #161b22;
   color: #e6edf3;
   text-align: left;
@@ -312,8 +312,7 @@ footer {
   transition: opacity 0.25s ease-in-out;
   font-size: 0.9rem;
   line-height: 1.4;
-  word-wrap: break-word;     /* ✅ allow wrapping */
-  white-space: normal;       /* ✅ break long lines */
+  white-space: normal;
 }
 
 .info-icon:hover .tooltip {
@@ -324,12 +323,12 @@ footer {
 /* ✅ Mobile fix for tooltip */
 @media (max-width: 480px) {
   .tooltip {
-    left: 0;
-    right: 0;
-    transform: none;
-    margin: 0 auto;
-    text-align: center;
-    bottom: 140%;
+    width: 220px;          /* shrink width (was 260px) */
+    font-size: 0.85rem;    
+    left: auto;            /* stop centering */
+    right: 0;              /* align to right edge */
+    transform: none;       
+    text-align: left;
   }
 }
 
@@ -444,30 +443,29 @@ footer {
 
 .analytics-panel,
 .heatmap-panel {
-  flex: 1 1 400px; 
+  flex: 1 1 400px;
 }
 
 .analytics-panel {
-  max-width: 400px; 
+  max-width: 400px;
 }
 
 .heatmap-panel {
-  flex: 2; 
+  flex: 2;
 }
 
 /* === Analytics + Heatmap Layout === */
 .analytics-heatmap-section {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 20px;
   margin-top: 20px;
 }
 
-/* Desktop: side by side with equal height */
 @media (min-width: 900px) {
   .analytics-heatmap-section {
     flex-direction: row;
-    align-items: stretch; 
+    align-items: stretch;
   }
 
   .analytics-panel,
@@ -478,11 +476,11 @@ footer {
   }
 
   .analytics-panel {
-    max-width: 400px; 
+    max-width: 400px;
   }
 
-  .analytics-panel > * ,
+  .analytics-panel > *,
   .heatmap-panel > * {
-    flex: 1; 
+    flex: 1;
   }
 }
