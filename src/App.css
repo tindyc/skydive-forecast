@@ -297,7 +297,7 @@ footer {
 .tooltip {
   visibility: hidden;
   opacity: 0;
-  width: 260px;
+  max-width: 260px;          /* ✅ was fixed width */
   background: #161b22;
   color: #e6edf3;
   text-align: left;
@@ -312,11 +312,25 @@ footer {
   transition: opacity 0.25s ease-in-out;
   font-size: 0.9rem;
   line-height: 1.4;
+  word-wrap: break-word;     /* ✅ allow wrapping */
+  white-space: normal;       /* ✅ break long lines */
 }
 
 .info-icon:hover .tooltip {
   visibility: visible;
   opacity: 1;
+}
+
+/* ✅ Mobile fix for tooltip */
+@media (max-width: 480px) {
+  .tooltip {
+    left: 0;
+    right: 0;
+    transform: none;
+    margin: 0 auto;
+    text-align: center;
+    bottom: 140%;
+  }
 }
 
 /* === JUMP CONDITIONS BOX === */
@@ -430,21 +444,21 @@ footer {
 
 .analytics-panel,
 .heatmap-panel {
-  flex: 1 1 400px; /* flexible, min width 400px */
+  flex: 1 1 400px; 
 }
 
 .analytics-panel {
-  max-width: 400px; /* keep chart compact */
+  max-width: 400px; 
 }
 
 .heatmap-panel {
-  flex: 2; /* give heatmap more space */
+  flex: 2; 
 }
 
 /* === Analytics + Heatmap Layout === */
 .analytics-heatmap-section {
   display: flex;
-  flex-direction: column; /* default stacked on mobile */
+  flex-direction: column; 
   gap: 20px;
   margin-top: 20px;
 }
@@ -453,7 +467,7 @@ footer {
 @media (min-width: 900px) {
   .analytics-heatmap-section {
     flex-direction: row;
-    align-items: stretch; /* ✅ force equal height */
+    align-items: stretch; 
   }
 
   .analytics-panel,
@@ -464,11 +478,11 @@ footer {
   }
 
   .analytics-panel {
-    max-width: 400px; /* analytics stays compact */
+    max-width: 400px; 
   }
 
   .analytics-panel > * ,
   .heatmap-panel > * {
-    flex: 1; /* ✅ fill vertical space equally */
+    flex: 1; 
   }
 }
