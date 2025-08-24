@@ -65,6 +65,14 @@ export default function DropzonePage() {
       .replace(/\//g, "-");
   };
 
+  // ✅ Scroll helper
+  const scrollToBigCard = () => {
+    const bigCard = document.querySelector(".big-weather-card");
+    if (bigCard) {
+      bigCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
   // ✅ Fetch dropzones.json from /public
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}dropzones.json`)
@@ -137,7 +145,10 @@ export default function DropzonePage() {
       {bestDay ? (
         <div
           className="best-day-banner clickable"
-          onClick={() => setSelectedDay(bestDay)}
+          onClick={() => {
+            setSelectedDay(bestDay);
+            scrollToBigCard(); // ✅ scroll when banner clicked
+          }}
         >
           🎉 Next good jump day:{" "}
           <strong>{formatDate(bestDay.date)}</strong> ({bestDay.description})
@@ -186,7 +197,10 @@ export default function DropzonePage() {
             className={`mini-weather-card ${
               selectedDay?.date === day.date ? "active" : ""
             }`}
-            onClick={() => setSelectedDay(day)}
+            onClick={() => {
+              setSelectedDay(day);
+              scrollToBigCard(); // ✅ scroll when mini card clicked
+            }}
           >
             <WeatherCard day={day} isBig={false} />
           </div>
@@ -207,7 +221,10 @@ export default function DropzonePage() {
                 heatmap={heatmap}
                 onSelectDay={(date) => {
                   const found = forecast.find((d) => d.date === date);
-                  if (found) setSelectedDay(found);
+                  if (found) {
+                    setSelectedDay(found);
+                    scrollToBigCard(); // ✅ scroll when heatmap card clicked
+                  }
                 }}
               />
             </div>
