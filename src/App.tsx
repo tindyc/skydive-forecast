@@ -190,7 +190,7 @@ function App() {
           <Route path="/dropzone/:name" element={<DropzonePage />} />
         </Routes>
         <footer>
-          <p> © <strong>TindyC</strong> ☁︎</p>
+          <p> SkydiveForecast ☁︎ <strong>TindyC</strong> </p>
         </footer>
       </div>
     </Router>
