@@ -1,0 +1,54 @@
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5x2 layout */
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.heatmap-day {
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.heatmap-day:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+.heatmap-day .date {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.status {
+  width: 28px;
+  height: 28px;
+  margin: 5px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  background-color: rgba(0,0,0,0.35);
+}
+
+.status.ok {
+  border: 2px solid #22c55e; /* green border */
+}
+.status.bad {
+  border: 2px solid #ef4444; /* red border */
+}
+
+.status.beginner {
+  background: rgba(147, 197, 253, 0.25); /* light blue tint */
+}
+
+.status.experienced {
+  background: rgba(250, 204, 21, 0.25); /* yellow tint */
+}

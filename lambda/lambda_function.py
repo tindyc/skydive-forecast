@@ -1,5 +1,6 @@
 import json
 import urllib.request
+import pandas as pd  # ✅ NEW: use pandas for analytics
 
 # ✅ Updated: fetch from public/dropzones.json (single source of truth)
 DZ_URL = "https://raw.githubusercontent.com/tindyc/skydive-forecast/main/public/dropzones.json"
@@ -129,6 +130,38 @@ def lambda_handler(event, context):
             )
             dz_report.append(day)
 
+        # ✅ Use pandas for analytics
+        df = pd.DataFrame(dz_report)
+
+        # Average stats
+        avg_temp = df["temperature_2m_max"].mean()
+        avg_wind = df["windspeed_10m_max"].mean()
+
+        # Count jumpable days
+        jumpable_beginner = (df["status_beginner"].str.contains("GOOD")).sum()
+        jumpable_experienced = (df["status_experienced"].str.contains("GOOD")).sum()
+
+        analytics = {
+            "avg_temp": round(avg_temp, 1),
+            "avg_wind": round(avg_wind, 1),
+            "jumpable_days_beginner": int(jumpable_beginner),
+            "jumpable_days_experienced": int(jumpable_experienced),
+            "total_days": len(df),
+        }
+
+        # ✅ Heatmap data (for fancy UI)
+        df["beginner_ok"] = df["status_beginner"].str.contains("GOOD")
+        df["experienced_ok"] = df["status_experienced"].str.contains("GOOD")
+
+        heatmap_data = df[[
+            "date",
+            "beginner_ok",
+            "experienced_ok",
+            "windspeed_10m_max",
+            "temperature_2m_max",
+            "description"
+        ]].to_dict(orient="records")
+
         # ✅ Success response
         return {
             "statusCode": 200,
@@ -140,7 +173,9 @@ def lambda_handler(event, context):
             },
             "body": json.dumps({
                 "dropzone": dz["name"],
-                "forecast": dz_report
+                "forecast": dz_report,
+                "analytics": analytics,
+                "heatmap": heatmap_data
             }),
         }
 

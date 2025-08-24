@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
 import "../components/WeatherCard.css";
-import { deslugify } from "../utils/slug"; 
+import { deslugify } from "../utils/slug";
 import Preloader from "../components/Preloader";
+import JumpabilityHeatmap from "../components/JumpabilityHeatmap"; // ✅ NEW
+import AnalyticsCard from "../components/AnalyticsCard"; // ✅ NEW (you’ll create this)
 
 type ForecastDay = {
   date: string;
@@ -22,17 +24,36 @@ type Dropzone = {
   lon: number;
 };
 
+type Analytics = {
+  avg_temp: number;
+  avg_wind: number;
+  jumpable_days_beginner: number;
+  jumpable_days_experienced: number;
+  total_days: number;
+};
+
+type HeatmapDay = {
+  date: string;
+  beginner_ok: boolean;
+  experienced_ok: boolean;
+  windspeed_10m_max: number;
+  temperature_2m_max: number;
+  description: string;
+};
+
 export default function DropzonePage() {
   const { name: slug } = useParams<{ name: string }>();
 
   const [dropzones, setDropzones] = useState<Dropzone[]>([]);
   const [dropzoneName, setDropzoneName] = useState<string>("");
   const [forecast, setForecast] = useState<ForecastDay[]>([]);
+  const [analytics, setAnalytics] = useState<Analytics | null>(null); // ✅ NEW
+  const [heatmap, setHeatmap] = useState<HeatmapDay[]>([]); // ✅ NEW
   const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
   const [bestDay, setBestDay] = useState<ForecastDay | null>(null);
 
-  // ✅ Format date as DD-MM-YYYY (for banner only)
+  // ✅ Format date as DD-MM-YYYY
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date
@@ -60,7 +81,7 @@ export default function DropzonePage() {
       .catch((err) => console.error("Failed to load dropzones:", err));
   }, [slug]);
 
-  // ✅ Fetch forecast from Lambda when dropzoneName is resolved
+  // ✅ Fetch forecast (with analytics + heatmap) from Lambda
   useEffect(() => {
     if (!dropzoneName) return;
 
@@ -78,7 +99,9 @@ export default function DropzonePage() {
 
         if (parsed.forecast && Array.isArray(parsed.forecast)) {
           setForecast(parsed.forecast);
-          setSelectedDay(parsed.forecast[0]); // default to today
+          setSelectedDay(parsed.forecast[0]);
+          if (parsed.analytics) setAnalytics(parsed.analytics); // ✅ NEW
+          if (parsed.heatmap) setHeatmap(parsed.heatmap); // ✅ NEW
         } else if (parsed.error) {
           setError(parsed.error);
         } else {
@@ -92,30 +115,32 @@ export default function DropzonePage() {
   useEffect(() => {
     if (!forecast.length) return;
 
-    const nextGoodDay = forecast.find((day) => {
-      const safeForExperienced =
-        day.windspeed_10m_max <= 30 &&
-        day.precipitation_sum === 0 &&
-        day.cloudcover_mean < 80 &&
-        day.temperature_2m_max > 0;
-      return safeForExperienced;
-    }) || null;
+    const nextGoodDay =
+      forecast.find((day) => {
+        const safeForExperienced =
+          day.windspeed_10m_max <= 30 &&
+          day.precipitation_sum === 0 &&
+          day.cloudcover_mean < 80 &&
+          day.temperature_2m_max > 0;
+        return safeForExperienced;
+      }) || null;
 
     setBestDay(nextGoodDay);
   }, [forecast]);
 
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
-  if (!forecast.length) return <Preloader />; 
+  if (!forecast.length) return <Preloader />;
 
   return (
     <div className="dropzone-page forecast-wrapper">
       {/* 🎉 Next Best Jump Day Notification */}
       {bestDay ? (
-        <div 
-          className="best-day-banner clickable" 
+        <div
+          className="best-day-banner clickable"
           onClick={() => setSelectedDay(bestDay)}
         >
-          🎉 Next good jump day: <strong>{formatDate(bestDay.date)}</strong> ({bestDay.description})
+          🎉 Next good jump day:{" "}
+          <strong>{formatDate(bestDay.date)}</strong> ({bestDay.description})
         </div>
       ) : (
         <div className="best-day-banner no-good-day">
@@ -147,6 +172,12 @@ export default function DropzonePage() {
           </div>
         ))}
       </div>
+
+      {/* 📊 Analytics summary */}
+      {analytics && <AnalyticsCard analytics={analytics} />}
+
+      {/* 🔥 Jumpability Heatmap */}
+      {heatmap.length > 0 && <JumpabilityHeatmap heatmap={heatmap} />}
     </div>
   );
 }
