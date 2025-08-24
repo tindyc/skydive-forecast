@@ -323,10 +323,10 @@ footer {
 /* ✅ Mobile fix for tooltip */
 @media (max-width: 480px) {
   .tooltip {
-    width: 220px;          /* shrink width (was 260px) */
+    width: 220px;          
     font-size: 0.85rem;    
-    left: auto;            /* stop centering */
-    right: 0;              /* align to right edge */
+    left: auto;            
+    right: 0;              
     transform: none;       
     text-align: left;
   }
@@ -434,53 +434,37 @@ footer {
   outline: none;
 }
 
-.analytics-heatmap-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.analytics-panel,
-.heatmap-panel {
-  flex: 1 1 400px;
-}
-
-.analytics-panel {
-  max-width: 400px;
-}
-
-.heatmap-panel {
-  flex: 2;
-}
-
 /* === Analytics + Heatmap Layout === */
 .analytics-heatmap-section {
   display: flex;
   flex-direction: column;
   gap: 20px;
   margin-top: 20px;
+  width: 100%;
+}
+
+.analytics-panel,
+.heatmap-panel {
+  flex: 1 1 100%;
 }
 
 @media (min-width: 900px) {
   .analytics-heatmap-section {
     flex-direction: row;
-    align-items: stretch;
-  }
-
-  .analytics-panel,
-  .heatmap-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px; /* ✅ spacing between panels */
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .analytics-panel {
+    flex: 0 0 350px;
     max-width: 400px;
   }
 
-  .analytics-panel > *,
-  .heatmap-panel > * {
+  .heatmap-panel {
     flex: 1;
   }
 }

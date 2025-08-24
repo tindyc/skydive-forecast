@@ -9,7 +9,7 @@
 }
 
 .footer {
-  margin-top: auto; /* ✅ pushes footer to bottom */
+  margin-top: auto; 
 }
 
 /* --- BIG FEATURED CARD --- */
@@ -186,7 +186,7 @@
   /* Big featured card */
   .big-weather-card {
     flex: 0 0 auto;
-    margin: 24px auto;        /* spacing above/below */
+    margin: 24px auto;        
     width: 100%;
     display: flex;
     justify-content: center;
@@ -196,7 +196,7 @@
     max-width: 950px;
     width: 90%;
     padding: 40px;
-    min-height: 320px;        /* ✅ bigger block */
+    min-height: 320px;       
   }
 
   .big-weather-card .weather-icon {
@@ -215,16 +215,15 @@
 
   /* Mini cards row */
   .small-cards-row {
-    flex: 1;                   /* ✅ fill leftover vertical space */
+    flex: 1;                  
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 40px;                 /* ✅ spacing between cards */
+    gap: 40px;              
     align-items: stretch;
   }
 
-  /* Fake padding at edges with before/after flex items */
   .small-cards-row::before,
   .small-cards-row::after {
     content: "";
@@ -235,7 +234,7 @@
     flex: 0 0 280px;
     max-width: 280px;
     height: auto;
-    min-height: 320px;        /* ✅ taller cards */
+    min-height: 320px;       
     padding: 28px;
     scroll-snap-align: start;
   }
@@ -316,6 +315,7 @@
 
 .best-day-banner.clickable:hover {
   background: #bae7ff;
-  color: black;
+  color: black;  
   transform: scale(1.02);
 }
+
