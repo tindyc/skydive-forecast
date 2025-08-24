@@ -89,6 +89,10 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Inject frontend env vars
+        run: |
+          echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> .env
+
       - name: Build frontend
         run: npm run build  
 
