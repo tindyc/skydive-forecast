@@ -119,19 +119,12 @@ export default function DropzonePage() {
       .catch((err) => setError(err.message));
   }, [dropzoneName]);
 
-  // ✅ Find next best day for experienced jumpers
+  // ✅ Fix: Use API-provided status_experienced to find next good day
   useEffect(() => {
     if (!forecast.length) return;
 
     const nextGoodDay =
-      forecast.find((day) => {
-        const safeForExperienced =
-          day.windspeed_10m_max <= 30 &&
-          day.precipitation_sum === 0 &&
-          day.cloudcover_mean < 80 &&
-          day.temperature_2m_max > 0;
-        return safeForExperienced;
-      }) || null;
+      forecast.find((day) => day.status_experienced.includes("GOOD")) || null;
 
     setBestDay(nextGoodDay);
   }, [forecast]);
