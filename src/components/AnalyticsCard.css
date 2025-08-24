@@ -14,3 +14,14 @@
 .analytics-card p {
   margin: 4px 0;
 }
+
+.stats-block {
+  margin-bottom: 16px; /* ✅ space before chart */
+}
+
+.stats-block p {
+  margin: 6px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e6edf3;
+}

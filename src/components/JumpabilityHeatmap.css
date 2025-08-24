@@ -35,20 +35,15 @@
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: bold;
-  background-color: rgba(0,0,0,0.35);
+  background-color: #161b22 !important; /* force dark grey */
+  color: #e6edf3;
 }
 
 .status.ok {
-  border: 2px solid #22c55e; /* green border */
+  border: 2px solid #22c55e; /* safe = green border */
 }
+
 .status.bad {
-  border: 2px solid #ef4444; /* red border */
+  border: 2px solid #ef4444; /* unsafe = red border */
 }
 
-.status.beginner {
-  background: rgba(147, 197, 253, 0.25); /* light blue tint */
-}
-
-.status.experienced {
-  background: rgba(250, 204, 21, 0.25); /* yellow tint */
-}

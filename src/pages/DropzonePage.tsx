@@ -4,8 +4,8 @@ import WeatherCard from "../components/WeatherCard";
 import "../components/WeatherCard.css";
 import { deslugify } from "../utils/slug";
 import Preloader from "../components/Preloader";
-import JumpabilityHeatmap from "../components/JumpabilityHeatmap"; // ✅ NEW
-import AnalyticsCard from "../components/AnalyticsCard"; // ✅ NEW (you’ll create this)
+import JumpabilityHeatmap from "../components/JumpabilityHeatmap"; // ✅ Heatmap
+import AnalyticsCard from "../components/AnalyticsCard"; // ✅ Analytics
 
 type ForecastDay = {
   date: string;
@@ -47,8 +47,8 @@ export default function DropzonePage() {
   const [dropzones, setDropzones] = useState<Dropzone[]>([]);
   const [dropzoneName, setDropzoneName] = useState<string>("");
   const [forecast, setForecast] = useState<ForecastDay[]>([]);
-  const [analytics, setAnalytics] = useState<Analytics | null>(null); // ✅ NEW
-  const [heatmap, setHeatmap] = useState<HeatmapDay[]>([]); // ✅ NEW
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [heatmap, setHeatmap] = useState<HeatmapDay[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<ForecastDay | null>(null);
   const [bestDay, setBestDay] = useState<ForecastDay | null>(null);
@@ -100,8 +100,8 @@ export default function DropzonePage() {
         if (parsed.forecast && Array.isArray(parsed.forecast)) {
           setForecast(parsed.forecast);
           setSelectedDay(parsed.forecast[0]);
-          if (parsed.analytics) setAnalytics(parsed.analytics); // ✅ NEW
-          if (parsed.heatmap) setHeatmap(parsed.heatmap); // ✅ NEW
+          if (parsed.analytics) setAnalytics(parsed.analytics);
+          if (parsed.heatmap) setHeatmap(parsed.heatmap);
         } else if (parsed.error) {
           setError(parsed.error);
         } else {
@@ -158,6 +158,26 @@ export default function DropzonePage() {
         </div>
       )}
 
+      {/* 📅 Mini cards row title with tooltip */}
+      <div
+        className="title-with-info"
+        style={{
+          justifyContent: "flex-start",
+          width: "100%",
+          maxWidth: "1200px",
+          marginTop: "10px",
+        }}
+      >
+        <h3>📅 10-Day Forecast</h3>
+        <span className="info-icon">
+          ℹ️
+          <span className="tooltip">
+            👉 Scroll horizontally to view all 10 forecast days. <br />
+            👉 Click on a day to see full details above.
+          </span>
+        </span>
+      </div>
+
       {/* Smaller cards row */}
       <div className="small-cards-row">
         {forecast.map((day) => (
@@ -173,11 +193,27 @@ export default function DropzonePage() {
         ))}
       </div>
 
-      {/* 📊 Analytics summary */}
-      {analytics && <AnalyticsCard analytics={analytics} />}
-
-      {/* 🔥 Jumpability Heatmap */}
-      {heatmap.length > 0 && <JumpabilityHeatmap heatmap={heatmap} />}
+      {/* 📊 Analytics + 🔥 Heatmap side by side */}
+      {(analytics || heatmap.length > 0) && (
+        <div className="analytics-heatmap-section">
+          {analytics && (
+            <div className="analytics-panel">
+              <AnalyticsCard analytics={analytics} />
+            </div>
+          )}
+          {heatmap.length > 0 && (
+            <div className="heatmap-panel">
+              <JumpabilityHeatmap
+                heatmap={heatmap}
+                onSelectDay={(date) => {
+                  const found = forecast.find((d) => d.date === date);
+                  if (found) setSelectedDay(found);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

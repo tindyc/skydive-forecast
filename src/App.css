@@ -420,3 +420,55 @@ footer {
   box-shadow: 0 0 6px rgba(0, 119, 255, 0.3);
   outline: none;
 }
+
+.analytics-heatmap-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.analytics-panel,
+.heatmap-panel {
+  flex: 1 1 400px; /* flexible, min width 400px */
+}
+
+.analytics-panel {
+  max-width: 400px; /* keep chart compact */
+}
+
+.heatmap-panel {
+  flex: 2; /* give heatmap more space */
+}
+
+/* === Analytics + Heatmap Layout === */
+.analytics-heatmap-section {
+  display: flex;
+  flex-direction: column; /* default stacked on mobile */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Desktop: side by side with equal height */
+@media (min-width: 900px) {
+  .analytics-heatmap-section {
+    flex-direction: row;
+    align-items: stretch; /* ✅ force equal height */
+  }
+
+  .analytics-panel,
+  .heatmap-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .analytics-panel {
+    max-width: 400px; /* analytics stays compact */
+  }
+
+  .analytics-panel > * ,
+  .heatmap-panel > * {
+    flex: 1; /* ✅ fill vertical space equally */
+  }
+}
